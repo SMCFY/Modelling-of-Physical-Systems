@@ -60,6 +60,7 @@ public:
         karplus.s_coeff = &s_coeff;
         karplus.p_coeff = &p_coeff;
         karplus.c_coeff = &c_coeff;
+        karplus.position = &position;
     }
 
     ~MIDIController()
@@ -118,6 +119,7 @@ public:
             s_coeff = 0.5;
             p_coeff = 0.999;
             c_coeff = 0.5;
+            position = 0.5;
             karplus.pluckString();
         }
     }
@@ -183,6 +185,7 @@ public:
     float s_coeff;
     float p_coeff;
     float c_coeff;
+    float position;
 
     KarplusStrong karplus;
 

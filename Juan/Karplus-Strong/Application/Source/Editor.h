@@ -27,7 +27,8 @@ public:
         frequencyControl ("F", 10, 1000, frequency, true),
         sCoeffControl ("S", 0, 0.999, 0.5),
         pCoeffControl ("P", 0.9, 1, 0.999),
-        cCoeffControl ("C", -1, 1, 0.5)
+        cCoeffControl ("C", -1, 1, 0.5),
+        positionControl ("D", 0, 1, 0.5)
     {
         addAndMakeVisible (pluckButton);
         pluckButton.setButtonText ("Pluck!");
@@ -37,11 +38,13 @@ public:
         addAndMakeVisible (sCoeffControl);
         addAndMakeVisible (pCoeffControl);
         addAndMakeVisible (cCoeffControl);
+        addAndMakeVisible (positionControl);
 
         karplus.freq = frequencyControl.registerValue();
         karplus.s_coeff = sCoeffControl.registerValue();
         karplus.p_coeff = pCoeffControl.registerValue();
         karplus.c_coeff = cCoeffControl.registerValue();
+        karplus.position = positionControl.registerValue();
     }
 
     ~Editor()
@@ -66,11 +69,12 @@ public:
         Rectangle<int> localBounds = getLocalBounds();
         pluckButton.setBounds (localBounds.removeFromTop (35).reduced (5));
 
-        int heightChild = localBounds.getHeight() / 4;
+        int heightChild = localBounds.getHeight() / 5;
         frequencyControl.setBounds(localBounds.removeFromTop (heightChild).reduced (5));
         sCoeffControl.setBounds (localBounds.removeFromTop (heightChild).reduced (5));
         pCoeffControl.setBounds (localBounds.removeFromTop (heightChild).reduced (5));
         cCoeffControl.setBounds (localBounds.removeFromTop (heightChild).reduced (5));
+        positionControl.setBounds (localBounds.removeFromTop (heightChild).reduced (5));
     }
 
     void buttonClicked (Button* button) override
@@ -86,6 +90,7 @@ public:
     Control sCoeffControl;
     Control pCoeffControl;
     Control cCoeffControl;
+    Control positionControl;
 
     KarplusStrong karplus;
 

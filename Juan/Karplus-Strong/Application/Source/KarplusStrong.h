@@ -61,8 +61,9 @@ public:
         
         x->allpass[0] = 0;
         x->allpass[1] = 0;
-        
-        x->rwindex = 0;
+
+        x->windex = 0;
+        x->ready = false;
     }
 
     void releaseResources()
@@ -71,6 +72,8 @@ public:
 
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
     {
+        if (!x->ready) return;
+
         /* Copy signal pointers */
         float* stringL = bufferToFill.buffer->getWritePointer(0);
         float* stringR = bufferToFill.buffer->getWritePointer(1);
@@ -88,10 +91,13 @@ public:
         float* lowpass = x->lowpass;
         float* allpass = x->allpass;
 
-        long rwindex = x->rwindex;
+        long windex = x->windex;
 
         /* Perform the DSP loop */
         float local_freq;
+        long rindex1;
+        long rindex2;
+        int pos;
         for (int ii = 0; ii < n; ++ii) {
             // update effective delaylength
             local_freq = *freq;
@@ -100,14 +106,25 @@ public:
             }
             delaylength = fs / local_freq;
 
-            // verify read/write index
-            while (rwindex >= delaylength) {
-                rwindex -= delaylength;
+            // select the plucking position
+            pos = int(*position * delaylength/2);
+            rindex1 = int(windex - delaylength/2) - pos;
+            while (rindex1 < 0) {
+                rindex1 += delaylength;
             }
+
+            rindex2 = int(windex - delaylength/2) + pos;
+            while (rindex2 < 0) {
+                rindex2 += delaylength;
+            }
+
+            // write output sample
+            *stringL++ += wavetable[rindex1] - wavetable[rindex2];
+            *stringR++ += wavetable[rindex1] - wavetable[rindex2];
 
             // read output of delayline
             delayline[1] = delayline[0];
-            delayline[0] = wavetable[rwindex];
+            delayline[0] = wavetable[windex];
 
             // read and write lowpass
             lowpass[1] = lowpass[0];
@@ -118,24 +135,27 @@ public:
             allpass[0] = - *c_coeff * lowpass[0] + lowpass[1] + *c_coeff * allpass[1];
 
             // feedback and playback
-            wavetable[rwindex] = allpass[0];
-            *stringL++ += wavetable[rwindex];
-            *stringR++ += wavetable[rwindex];
+            wavetable[windex] = allpass[0];
             
-            // update rwindex
-            rwindex++;
+            // update windex
+            windex++;
+            while (windex >= delaylength) {
+                windex -= delaylength;
+            }
         }
         
         /* Update state variables */
         x->delaylength = delaylength;
-        x->rwindex = rwindex;
+        x->windex = windex;
     }
 
     void pluckString(const int numberOfStrings = 1)
     {
+        x->ready = false;
         for (int ii = 0; ii < x->delaylength; ++ii) {
-            x->wavetable[ii] = (2 * random.nextFloat() - 1) / numberOfStrings;
+            x->wavetable[ii] = (2.0f * random.nextFloat() - 1.0f) / numberOfStrings;
         }
+        x->ready = true;
     }
 
     //==========================================================================
@@ -143,6 +163,7 @@ public:
     float* s_coeff;
     float* p_coeff;
     float* c_coeff;
+    float* position;
 
 private:
     Random random;
@@ -157,8 +178,9 @@ private:
         float delayline[2];
         float lowpass[2];
         float allpass[2];
-        
-        long rwindex;
+
+        long windex;
+        bool ready;
     } t_karplus;
     t_karplus *x;
 
