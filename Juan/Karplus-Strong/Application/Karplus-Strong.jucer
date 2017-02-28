@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="AMgJPj" name="Karplus-Strong" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.JuanGil.KarplusStrong" includeBinaryInAppConfig="1"
+              jucerVersion="4.3.1" companyName="Juan Gil" companyWebsite="http://juangil.com"
+              companyEmail="juan@juangil.com">
+  <MAINGROUP id="d9jMq3" name="Karplus-Strong">
+    <GROUP id="{4A466AE7-D0A4-48C9-461A-3D59BEA5E1F9}" name="Source">
+      <FILE id="goBsDb" name="KarplusStrong.h" compile="0" resource="0" file="Source/KarplusStrong.h"/>
+      <FILE id="o9lRUz" name="MIDIController.h" compile="0" resource="0"
+            file="Source/MIDIController.h"/>
+      <FILE id="eEJzXc" name="Control.h" compile="0" resource="0" file="Source/Control.h"/>
+      <FILE id="JyM4t5" name="Editor.h" compile="0" resource="0" file="Source/Editor.h"/>
+      <FILE id="ri2sOc" name="Guitar.h" compile="0" resource="0" file="Source/Guitar.h"/>
+      <FILE id="VItltr" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="GRVSIy" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="Is2PeM" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Karplus-Strong"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Karplus-Strong"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../_SDK_/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="portrait" iosDevelopmentTeamID="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Karplus-Strong"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Karplus-Strong"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../_SDK_/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../_SDK_/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
