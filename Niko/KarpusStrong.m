@@ -61,7 +61,7 @@ f = 220; % Hz
 N = fs/f;
 %N = floor(N);
 N = floor(N/2); %
-m = 20; % pluck position
+m = 50; % pluck position
 
 x = 2*rand(1,N);
 x = x - mean(x); % remove DC off
@@ -104,14 +104,14 @@ for i = 1:t % t is the iterations
     % tap the delaylines at N-m and m.
     signal = [signal y(N-m)+(-y2(m))];
 end
-
+di = 1;
 dist = zeros(size(signal));
 for i=1:length(signal)
-    if signal(i)*10 >= 1
+    if signal(i)*di >= 1
         dist(i) = (2/3);
-    elseif signal(i)*10 < 1 && signal(i)*10 > -1
+    elseif signal(i)*di < 1 && signal(i)*di > -1
         dist(i) = signal(i) - signal(i)^3/3;
-    elseif signal(i)*10 <= -1
+    elseif signal(i)*di <= -1
         dist(i) = -(2/3);
     end
 end
