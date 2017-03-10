@@ -74,7 +74,7 @@ x2 = zeros(1,N);
 f = 1/(2*pi) * sqrt(k/m)% resonant frequency
 f2 = 1/(2*pi) * sqrt(k2/m2)% resonant frequency
 
-input = 1000;
+input = 100000;
 
 noise = 2*rand(1,input);
 noise = noise - mean(noise); % remove DC off
