@@ -1,5 +1,5 @@
 fs = 44100; % sample rate
-it = 44100; % iterations
+it = 44100; % iterations (1 second output)
 p = 440; % periodicity parameter (wavetable length)
 
 N = fs/p; N = floor(N); % delay length
