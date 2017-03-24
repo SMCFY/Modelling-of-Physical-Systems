@@ -3,7 +3,7 @@ m1 = 1; m2 = 1.594; m3 = 2.136;
 
 f1 = m1*200; f2 = m2*f1; f3 = m3*f1; % modal frequencies [Hz]
 d1 = 30; d2 = 55; d3 = 60; % damping coefficients [Hz/rads] (material)
-a1 = 1; a2 = 1; a3 =1; % gain coeffiecients
+a1 = 1; a2 = 0.998; a3 =0.996; % gain coeffiecients
 
 % modal matrix (3 modes, 1 contact point)
 % M = [f1, d1, a11;
