@@ -1,4 +1,4 @@
-%% modal synthesis (circluar membrane)
+% modal synthesis (circluar membrane)
 
 fs = 44100; % sampling rate
 t = [0:1/fs:1]; % sample length
@@ -11,7 +11,6 @@ A = [
     0 0 1 0 1 0 1 0 1;
     1 0 0 0 0 0 0 0 0;
     0 0 0.8 1 0.8 0 0.8 1 0.8;
-    0 0 0.4 0.6 0.4 0 0.4 0.6 0.4
     ];
 
 % modal frequencies for ideal circular membrane[1] and estimated decay coefficients
@@ -20,15 +19,14 @@ A = [
 % T = ; % surface tension
 % c = sqrt(T/sigma); % transverse wave equation, with velocity "c"
 % f0 = 2.405/2*pi*r*c; [Hz]
-f0 = 140;
+f0 = 130;
 
 fd =[
-    f0*1.000 25;
-    f0*1.594 30;
-    f0*2.136 35;
+    f0*1.000 18;
+    f0*1.594 25;
+    f0*2.136 30;
     f0*2.296 40;
     f0*2.653 45;
-    f0*2.918 50
     ];
 
 % modal parameter matrix
