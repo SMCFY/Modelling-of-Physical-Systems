@@ -48,10 +48,14 @@ for i=1:length(A(:,1)) % number of modes
 end
 
 % excitation (impact)
-x = rand(1,50);
-x = x - mean(x); % remove offset (center around mean)
-x = x/max(x); % normalisation
-x = [x zeros(1,length(t)-length(x))]; % zero padding
+impDur = [0:1/50:1]; % impact duration in samples
+F = zeros(1,length(impDur)); % impact force
+for i = 1:length(impDur)
+F(i) = 1- cos((2*pi*impDur(i))); % shifted cosine function
+end
+F = F./ max(F); % normalisation
+F = F(1:round(length(F)/4)); % impact force truncation 
+F = [F, zeros(1, length(t)-length(F))]; % zero padding
 
 % output
 signal = zeros(1,length(t)); % output signal
@@ -65,7 +69,7 @@ for n=1:length(A(:,1)) % iterate through modes
     
     for k=1:length(A(1,:)) % iteratate through contact points
         for i=1:length(t) % iterate through samples
-            y(i) = 2*R(n,k)*cos(theta(n))*xn1 - R(n,k)*R(n,k)*xn2+x(i);
+            y(i) = 2*R(n,k)*cos(theta(n))*xn1 - R(n,k)*R(n,k)*xn2+F(i);
             xn2 = xn1;
             xn1 = y(i);
         end
