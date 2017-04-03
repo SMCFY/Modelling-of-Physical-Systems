@@ -3,7 +3,7 @@ it = 44100; % iterations (1 second output)
 p = 440; % periodicity parameter (wavetable length)
 
 N = fs/p; N = floor(N); % delay length
-y = [zeros(1,N+1)]; % delay line
+y = zeros(1,N+1); % delay line
 
 x = rand(1,N); % input noise
 x = x - mean(x); % remove DC offset
@@ -17,7 +17,7 @@ signal = 0; % output signal
 a = 0.5; % lowpass coeff
 g = 0.7; % allpass coeff
 
-m = N/2 % plucking position
+m = N/2; % plucking position
 
 % plucked string
  for i = 1:it
@@ -37,7 +37,7 @@ m = N/2 % plucking position
  end
 
 h = audioread('Taylor_314ce.wav'); % IR of a Taylor 314ce acoustic guitar 
-signal = conv(signal, h);
+%signal = conv(signal, h);
 
 plot(signal);
 sound (signal, fs);
