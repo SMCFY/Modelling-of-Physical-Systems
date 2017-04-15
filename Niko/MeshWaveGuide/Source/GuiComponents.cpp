@@ -52,6 +52,21 @@ GuiComponents::GuiComponents ()
     textButtonTrigger->setButtonText (TRANS("Trigger!"));
     textButtonTrigger->addListener (this);
 
+    addAndMakeVisible (labelAmp = new Label ("label for Amp",
+                                             TRANS("Amp\n")));
+    labelAmp->setFont (Font ("Arial", 15.00f, Font::bold));
+    labelAmp->setJustificationType (Justification::centredRight);
+    labelAmp->setEditable (false, false, false);
+    labelAmp->setColour (TextEditor::textColourId, Colours::black);
+    labelAmp->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sliderAmp = new Slider ("slider for Amp"));
+    sliderAmp->setTooltip (TRANS("changes Amp\n"));
+    sliderAmp->setRange (1, 500, 0);
+    sliderAmp->setSliderStyle (Slider::LinearHorizontal);
+    sliderAmp->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderAmp->addListener (this);
+
 
     //[UserPreSize]
     sliderN->setValue (32);
@@ -72,6 +87,8 @@ GuiComponents::~GuiComponents()
     sliderN = nullptr;
     labelN = nullptr;
     textButtonTrigger = nullptr;
+    labelAmp = nullptr;
+    sliderAmp = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -98,6 +115,8 @@ void GuiComponents::resized()
     sliderN->setBounds (48, 8, proportionOfWidth (0.5000f), 24);
     labelN->setBounds (8, 8, 31, 24);
     textButtonTrigger->setBounds (getWidth() - 170, 8, 150, 24);
+    labelAmp->setBounds (0, 32, 40, 24);
+    sliderAmp->setBounds (48, 32, proportionOfWidth (0.5000f), 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -115,6 +134,15 @@ void GuiComponents::sliderValueChanged (Slider* sliderThatWasMoved)
         GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
         listeners.callChecked (checker, &GuiComponents::Listener::meshSizeNChanged, gcomps);
         //[/UserSliderCode_sliderN]
+    }
+    else if (sliderThatWasMoved == sliderAmp)
+    {
+        //[UserSliderCode_sliderAmp] -- add your slider handling code here..
+        amp = (float)sliderAmp->getValue();
+        Component::BailOutChecker checker (this);
+        GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
+        listeners.callChecked (checker, &GuiComponents::Listener::ampChanged, gcomps);
+        //[/UserSliderCode_sliderAmp]
     }
 
     //[UsersliderValueChanged_Post]
@@ -174,6 +202,16 @@ BEGIN_JUCER_METADATA
   <TEXTBUTTON name="button trigger" id="eefe4fcf9a2137a9" memberName="textButtonTrigger"
               virtualName="" explicitFocusOrder="0" pos="170R 8 150 24" tooltip="Trigger the sound!&#10;"
               buttonText="Trigger!" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <LABEL name="label for Amp" id="3fc986231a8d318c" memberName="labelAmp"
+         virtualName="" explicitFocusOrder="0" pos="0 32 40 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Amp&#10;" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Arial" fontsize="15" bold="1"
+         italic="0" justification="34"/>
+  <SLIDER name="slider for Amp" id="4ed88ac0173b5d93" memberName="sliderAmp"
+          virtualName="" explicitFocusOrder="0" pos="48 32 50% 24" tooltip="changes Amp&#10;"
+          min="1" max="500" int="0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

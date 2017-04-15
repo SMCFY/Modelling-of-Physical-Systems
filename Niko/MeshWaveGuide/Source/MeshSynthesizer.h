@@ -156,13 +156,6 @@ public:
                   vym_[x][y] = vxy - vyp1_[x][y];
                 }
               }
-              // set debug image:
-              float csc = 100.0f; // colorscale
-              for (x=0; x<meshStateImage.getWidth(); x++) {
-                for (y=0; y<meshStateImage.getHeight(); y++) {
-                  meshStateImage.setPixelAt(x,y, Colour::fromFloatRGBA( ((v_[x][y] < 0) ? -v_[x][y] : 0.0f)*csc, ((v_[x][y] >= 0) ? v_[x][y] : 0.0f)*csc, 0.0f, 1.0f));
-                }
-              }
               // Loop over velocity-junction boundary faces, update edge
               // reflections, with filtering.  We're only filtering on one x and y
               // edge here and even this could be made much sparser.
@@ -177,8 +170,16 @@ public:
               }
               // Output = sum of outgoing waves at far corner.
               //~ outBuffer[i] = vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1];
-              outBuffer[i] = vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2];
+              outBuffer[i] = amp*(vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2]);
             } // end if tick1
+            // set debug image:
+            float tval; for (x=0; x<meshStateImage.getWidth(); x++) {
+              for (y=0; y<meshStateImage.getHeight(); y++) {
+                tval = (vxp1_[x][y] + vyp1_[x][y]); //;
+                meshStateImage.setPixelAt(x,y, Colour::fromFloatRGBA( ((tval < 0) ? -tval : 0.0f)*amp, ((tval >= 0) ? tval : 0.0f)*amp, 0.0f, 1.0f));
+                meshStateImage2.setPixelAt(x,y, Colour::fromFloatRGBA( ((v_[x][y] < 0) ? -v_[x][y] : 0.0f)*amp, ((v_[x][y] >= 0) ? v_[x][y] : 0.0f)*amp, 0.0f, 1.0f));
+              }
+            }
             //~ DBG( outBuffer[i] );
         }
     }
@@ -200,9 +201,11 @@ public:
       vym1_.resize(NJ, std::vector<float>(NJ, 0.0f));
 
       meshStateImage = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
+      meshStateImage2 = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
     }
 
-    Image meshStateImage;
+    Image meshStateImage, meshStateImage2;
+    float amp = 1.0f;
 
 private:
     //==============================================================================

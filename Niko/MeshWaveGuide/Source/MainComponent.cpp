@@ -100,7 +100,8 @@ public:
 
 
         // You can add your drawing code here!
-        g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage, 700, 200);
+        g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage, 650, 200);
+        g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage2, 650, 300);
         repaint(); // must have this to have the image update...
     }
 
@@ -117,6 +118,11 @@ public:
         myOpenGLViewer.setBounds(0, 80, proportionOfWidth(0.8f), proportionOfHeight(0.75f));
     }
 
+    void ampChanged (GuiComponents* gcomps) override
+    {
+      //~ DBG( "Received ampChanged: " + String(gcomps->amp));
+      meshSynths.getUnchecked(0)->amp = gcomps->amp;
+    }
     void meshSizeNChanged (GuiComponents* gcomps) override
     {
       //DBG( "Received meshSizeNChanged: " + String(gcomps->meshSizeN));

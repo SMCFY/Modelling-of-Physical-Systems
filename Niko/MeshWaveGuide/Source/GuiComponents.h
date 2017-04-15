@@ -53,6 +53,7 @@ public:
 
       virtual void meshSizeNChanged (GuiComponents* gcomps) = 0;
       //virtual void meshSizeNChanged (GuiComponents*) {}
+      virtual void ampChanged (GuiComponents* gcomps) = 0;
       virtual void triggerButtonClicked (GuiComponents* gcomps) = 0;
     };
 
@@ -62,6 +63,7 @@ public:
     void removeListener (Listener* listener);
     ListenerList <GuiComponents::Listener> listeners;
     int meshSizeN;
+    float amp;
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -79,6 +81,8 @@ private:
     ScopedPointer<Slider> sliderN;
     ScopedPointer<Label> labelN;
     ScopedPointer<TextButton> textButtonTrigger;
+    ScopedPointer<Label> labelAmp;
+    ScopedPointer<Slider> sliderAmp;
 
 
     //==============================================================================
