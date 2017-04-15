@@ -34,7 +34,7 @@ GuiComponents::GuiComponents ()
 
     addAndMakeVisible (sliderN = new Slider ("slider for N"));
     sliderN->setTooltip (TRANS("changes N"));
-    sliderN->setRange (2, 256, 1);
+    sliderN->setRange (2, 64, 1);
     sliderN->setSliderStyle (Slider::LinearHorizontal);
     sliderN->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
     sliderN->addListener (this);
@@ -54,7 +54,7 @@ GuiComponents::GuiComponents ()
 
 
     //[UserPreSize]
-    sliderN->setValue (128);
+    sliderN->setValue (32);
     //[/UserPreSize]
 
     setSize (800, 400);
@@ -163,7 +163,7 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ffffffff"/>
   <SLIDER name="slider for N" id="437c6ee0435feb1f" memberName="sliderN"
           virtualName="" explicitFocusOrder="0" pos="48 8 50% 24" tooltip="changes N"
-          min="2" max="256" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          min="2" max="64" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
   <LABEL name="label for N" id="4a63e31803c56bd0" memberName="labelN"

@@ -174,7 +174,7 @@ private:
 
 //==============================================================================
 OpenGLViewer::OpenGLViewer()
-: doBackgroundDrawing (false),
+                  : doBackgroundDrawing (false),
                     scale (0.5f)
 {
     // In your constructor, you should add any child components, and

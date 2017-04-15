@@ -69,210 +69,110 @@ public:
         if (doPluckForNextBuffer.compareAndSetBool (0, 1))
             exciteInternalBuffer();
 
-        if (checkNJ == NJ)
+        // cycle through the delay line and apply a simple averaging filter
+        for (int i = 0; i < numSamples; ++i)
         {
-            int NJ2 = NJ;
-            for (int i = 0; i < numSamples; ++i)
-            {
-                /// const int nextPos = (pos + 1) % delayLine.size();
-                ///
-                /// delayLine[nextPos] = (float) (decay * 0.5 * (delayLine[nextPos] + delayLine[pos]));
-                /// outBuffer[i] += delayLine[pos];
-                ///
-                /// pos = nextPos;
-                
-                tickcount++;
-                int x, y;
-                if (tickcount % 2 == 0) { // tick0 - every even iteration
-                    /// % Update junction velocity
-                    /// v = 0.5 * (vxp(1:NJ-1,1:NJ-1) + vxm(1:NJ-1,2:NJ) + ...
-                    ///            vyp(1:NJ-1,1:NJ-1) + vym(2:NJ,1:NJ-1));
-                    for (x = 0; x < NJ2-1; x++) {
-                        for (y = 0; y < NJ2-1; y++) {
-                            v_[x][y] = ( vxp_[x][y] + vxm_[x][y+1] +
-                                        vyp_[x][y] + vym_[x+1][y] ) * 0.5;
-                        }
-                    }
-                    /// % Update outgoing junction wave components.
-                    ///
-                    /// vxp1(1:NJ-1,2:NJ)   = v - vxm(1:NJ-1,2:NJ);
-                    /// vyp1(2:NJ,1:NJ-1)   = v - vym(2:NJ,1:NJ-1);
-                    /// vxm1(1:NJ-1,1:NJ-1) = v - vxp(1:NJ-1,1:NJ-1);
-                    /// vym1(1:NJ-1,1:NJ-1) = v - vyp(1:NJ-1,1:NJ-1);
-                    for (x = 0; x < NJ2-1; x++) {
-                        for (y = 0; y < NJ2-1; y++) {
-                            float vxy = v_[x][y];
-                            // Update positive-going waves.
-                            vxp1_[x][y+1] = vxy - vxm_[x][y+1];
-                            vyp1_[x+1][y] = vxy - vym_[x+1][y];
-                            // Update minus-going waves.
-                            vxm1_[x][y] = vxy - vxp_[x][y];
-                            vym1_[x][y] = vxy - vyp_[x][y];
-                        }
-                    }
-                    /// % Compute nodes next to boundaries (reflection).
-                    /// % west
-                    // vxp1(1:NJ-1,1)  = decayFactor * filter( num, denom,   vxm(1:NJ-1,1));
-                    /// % east
-                    /// vxm1(1:NJ-1,NJ) = decayFactor * filter( num, denom,   vxp(1:NJ-1,NJ));
-                    /// % north
-                    /// vyp1(1,1:NJ-1)  = decayFactor * filter( num, denom,   vym(1,1:NJ-1));
-                    /// % south
-                    
-                    // here just decayfactor, no filter
-                    for (int j = 0; j < NJ2-1; j++) {
-                        // west
-                        // vxp1(1:NJ-1,1)  = decayFactor * filter( num, denom,   vxm(1:NJ-1,1));
-                        vxp1_[j][0] = decayFactor * ((vxm_[j][0] + buffer[0]) * lowpassCoef);
-                        buffer[0] = vxm_[j][0];
-                        ///  east
-                        
-                        vxm1_[j][NJ2-1] = decayFactor * ((vxp_[j][NJ2-1] + buffer[1]) * lowpassCoef);
-                        buffer[1] = vxp_[j][NJ2-1];
-                        
-                        // optimise code
-                        /// % north
-                        vyp1_[0][j] = decayFactor * ((vym_[0][j] + buffer[2]) * lowpassCoef);
-                        buffer[2] = vym_[0][j];
-                        /// % south
-                        vym1_[NJ2-1][j] = decayFactor * ((vyp_[NJ2-1][j] + buffer[3]) * lowpassCoef);
-                        buffer[3] = vyp_[NJ2-1][j];
-                    }
-                    
-                 
-                    /// vym1(NJ,1:NJ-1) = decayFactor * filter( num, denom,   vyp(NJ,1:NJ-1));
-                   /* for (int j = 0; j < NJ2-1; j++) {
-                        vyp1_[0][j] = decayFactor * ((vym_[0][j] + buffer[2]) * lowpassCoef);
-                        buffer[2] = vym_[0][j];
-                        vym1_[NJ2-1][j] = decayFactor * ((vyp_[NJ2-1][j] + buffer[3]) * lowpassCoef);
-                        buffer[3] = vyp_[NJ2-1][j];
-                    }*/
-                    ///% Compute perfect reflection
-                   /* % Compute perfect reflection
-                    % west
-                    vxp1(1:NJ-1,1)  =   vxm(1:NJ-1,1);
-                    % east
-                    vxm1(1:NJ-1,NJ) =   vxp(1:NJ-1,NJ);
-                    % north
-                    vyp1(1,1:NJ-1)  =   vym(1,1:NJ-1);
-                    % south
-                    vym1(NJ,1:NJ-1) =   vyp(NJ,1:NJ-1);*/
-                    // Compute perfect reflection
-                    /*
-                    for (int j = 0; j < NJ2-1; j++) {
-                        // west
-                        vxp1_[j][0] = vxm_[j][0];
-                        /// % east
-                        vxm1_[j][NJ2-1] = vxp_[j][NJ2-1];
-                        
-                        vyp1_[0][j] = vym_[0][j];
-                        /// % south
-                        vym1_[NJ2-1][j] = vyp_[NJ2-1][j];
-                    }*/
-                    // get output sample (sum of outgoing waves at a x,y position on grid); take the corner here
-                    // should be vxp_ and vyp_ in two-pass algo; in one-pass use the *1_ to at least hear something
-                    //~ outBuffer[i] = vxp_[NJ-1][NJ-1] + vyp_[NJ-1][NJ-1];
-                   // outBuffer[i] = vxp_[NJ2/2][NJ2/2] + vyp_[NJ2/2][NJ2/2];
-                    //~ DBG( outBuffer[i] );
-                } // end if tick0
-                else { // tick1
-                    
-                    /*
-                    // Update junction velocities.
-                    for (x=0; x<NJ2-1; x++) {
-                        for (y=0; y<NJ2-1; y++) {
-                            v_[x][y] = ( vxp1_[x][y] + vxm1_[x+1][y] +
-                                        vyp1_[x][y] + vym1_[x][y+1] ) * 0.5;
-                        }
-                    }
-                    // Update junction outgoing waves,
-                    // using alternate wave-variable buffers.
-                    for (x=0; x<NJ2-1; x++) {
-                        for (y=0; y<NJ2-1; y++) {
-                            float vxy = v_[x][y];
-                            
-                            // Update positive-going waves.
-                            vxp_[x+1][y] = vxy - vxm1_[x+1][y];
-                            vyp_[x][y+1] = vxy - vym1_[x][y+1];
-                            
-                            // Update minus-going waves.
-                            vxm_[x][y] = vxy - vxp1_[x][y];
-                            vym_[x][y] = vxy - vyp1_[x][y];
-                        }
-                    }
-                    // Loop over velocity-junction boundary faces, update edge
-                    // reflections, with filtering.  We're only filtering on one x and y
-                    // edge here and even this could be made much sparser.
-                    // no filter here - just decayFactor*
-                    for (y=0; y<NJ2-1; y++) {
-                        vxp_[0][y] = decayFactor * vxm1_[0][y];
-                        vxm_[NJ2-1][y] = vxp1_[NJ2-1][y];
-                    }
-                    for (x=0; x<NJ2-1; x++) {
-                        vyp_[x][0] = decayFactor*vym1_[x][0];
-                        vym_[x][NJ2-1] = vyp1_[x][NJ2-1];
-                    }*/
-                    for (x = 0; x < NJ2-1; x++) {
-                        for (y = 0; y < NJ2-1; y++) {
-                            v_[x][y] = ( vxp1_[x][y] + vxm1_[x][y+1] +
-                                        vyp1_[x][y] + vym1_[x+1][y] ) * 0.5;
-                        }
-                    }
-                    /// % Update outgoing junction wave components.
-          
-                    for (x = 0; x < NJ2-1; x++) {
-                        for (y = 0; y < NJ2-1; y++) {
-                            float vxy = v_[x][y];
-                            // Update positive-going waves.
-                            vxp_[x][y+1] = vxy - vxm1_[x][y+1];
-                            vyp_[x+1][y] = vxy - vym1_[x+1][y];
-                            // Update minus-going waves.
-                            vxm_[x][y] = vxy - vxp1_[x][y];
-                            vym_[x][y] = vxy - vyp1_[x][y];
-                        }
-                    }
-                    /// % Compute nodes next to boundaries (reflection).
-                    /// % west
-                    /// vxp1(1:NJ-1,1)  = decayFactor * filter( num, denom,   vxm(1:NJ-1,1));
-                    /// % east
-                    /// vxm1(1:NJ-1,NJ) = decayFactor * filter( num, denom,   vxp(1:NJ-1,NJ));
-                    
-                    // here just decayfactor with filter
-                    for (int j = 0; j < NJ2-1; j++) {
-                        
-                        vxp_[j][0] = decayFactor * ((vxm1_[j][0] + buffer2[0]) * lowpassCoef );
-                        buffer2[0] = vxp_[j][0];
-                        vxm_[j][NJ2-1] = decayFactor * ((vxp1_[j][NJ2-1] + buffer2[1]) * lowpassCoef);
-                        buffer2[1] = vxm_[j][NJ2-1];
-                        
-                        // optimise code
-                        vyp_[0][j] = decayFactor * ((vym1_[0][j] + buffer2[2]) * lowpassCoef);
-                        buffer2[2] = vyp_[0][j];
-                        vym_[NJ2-1][j] = decayFactor * ((vyp1_[NJ2-1][j] + buffer2[3]) * lowpassCoef);
-                        buffer2[3] = vym_[NJ2-1][j];
-                    }
-                    
-                    /// % north
-                    /// vyp1(1,1:NJ-1)  = decayFactor * filter( num, denom,   vym(1,1:NJ-1));
-                    /// % south
-                    /// vym1(NJ,1:NJ-1) = decayFactor * filter( num, denom,   vyp(NJ,1:NJ-1));
-                    /*for (int j = 0; j < NJ2-1; j++) {
-                        vyp_[0][j] = decayFactor * ((vym1_[0][j] + buffer2[2]) * lowpassCoef);
-                        buffer2[2] = vym1_[0][j];
-                        vym_[NJ2-1][j] = decayFactor * ((vyp1_[NJ2-1][j] + buffer2[3]) * lowpassCoef);
-                        buffer2[3] = vyp1_[NJ2-1][j];
-                    }*/
-                    // Output = sum of outgoing waves at far corner.
-                    //~ outBuffer[i] = vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1];
-                    //outBuffer[i] = vxp1_[NJ2/2][NJ2/2] + vyp1_[NJ2/2][NJ2/2];
-                } // end if tick1
-                //~ DBG( outBuffer[i] );
-                outBuffer[i] = v_[NJ2/2][NJ2/2];
-                
-            }
-        } else {
-            for (int i = 0; i < numSamples; i++)
-                outBuffer[i] = 0.0f;
+            /// const int nextPos = (pos + 1) % delayLine.size();
+            ///
+            /// delayLine[nextPos] = (float) (decay * 0.5 * (delayLine[nextPos] + delayLine[pos]));
+            /// outBuffer[i] += delayLine[pos];
+            ///
+            /// pos = nextPos;
+
+            tickcount++;
+            int x, y;
+            if (tickcount % 2 == 0) { // tick0 - every even iteration
+              /// % Update junction velocity
+              /// v = 0.5 * (vxp(1:NJ-1,1:NJ-1) + vxm(1:NJ-1,2:NJ) + ...
+              ///            vyp(1:NJ-1,1:NJ-1) + vym(2:NJ,1:NJ-1));
+              for (x=0; x<NJ-1; x++) {
+                for (y=0; y<NJ-1; y++) {
+                  v_[x][y] = ( vxp_[x][y] + vxm_[x+1][y] +
+                              vyp_[x][y] + vym_[x][y+1] ) * 0.5;
+                }
+              }
+              /// % Update outgoing junction wave components.
+              ///
+              /// vxp1(1:NJ-1,2:NJ)   = v - vxm(1:NJ-1,2:NJ);
+              /// vyp1(2:NJ,1:NJ-1)   = v - vym(2:NJ,1:NJ-1);
+              /// vxm1(1:NJ-1,1:NJ-1) = v - vxp(1:NJ-1,1:NJ-1);
+              /// vym1(1:NJ-1,1:NJ-1) = v - vyp(1:NJ-1,1:NJ-1);
+              for (x=0; x<NJ-1; x++) {
+                for (y=0; y<NJ-1; y++) {
+                  float vxy = v_[x][y];
+                  // Update positive-going waves.
+                  vxp1_[x+1][y] = vxy - vxm_[x+1][y];
+                  vyp1_[x][y+1] = vxy - vym_[x][y+1];
+                  // Update minus-going waves.
+                  vxm1_[x][y] = vxy - vxp_[x][y];
+                  vym1_[x][y] = vxy - vyp_[x][y];
+                }
+              }
+              /// % Compute nodes next to boundaries (reflection).
+              /// % west
+              /// vxp1(1:NJ-1,1)  = decayFactor * filter( num, denom,   vxm(1:NJ-1,1));
+              /// % east
+              /// vxm1(1:NJ-1,NJ) = decayFactor * filter( num, denom,   vxp(1:NJ-1,NJ));
+              /// % north
+              /// vyp1(1,1:NJ-1)  = decayFactor * filter( num, denom,   vym(1,1:NJ-1));
+              /// % south
+              /// vym1(NJ,1:NJ-1) = decayFactor * filter( num, denom,   vyp(NJ,1:NJ-1));
+              // here just decayfactor, no filter
+              for (y=0; y<NJ-1; y++) {
+                vxp1_[0][y] = decayFactor* vxm_[0][y];
+                vxm1_[NJ-1][y] = decayFactor* vxp_[NJ-1][y];
+              }
+              for (x=0; x<NJ-1; x++) {
+                vyp1_[x][0] = decayFactor*vym_[x][0];
+                vym1_[x][NJ-1] = decayFactor*vyp_[x][NJ-1];
+              }
+              ///% Compute perfect reflection - skipping
+              // get output sample (sum of outgoing waves at a x,y position on grid); take the corner here
+              // should be vxp_ and vyp_ in two-pass algo; in one-pass use the *1_ to at least hear something
+              //~ outBuffer[i] = vxp_[NJ-1][NJ-1] + vyp_[NJ-1][NJ-1];
+              outBuffer[i] = vxp_[NJ/2][NJ/2] + vyp_[NJ/2][NJ/2];
+              //~ DBG( outBuffer[i] );
+            } // end if tick0
+            else { // tick1
+              // Update junction velocities.
+              for (x=0; x<NJ-1; x++) {
+                for (y=0; y<NJ-1; y++) {
+                  v_[x][y] = ( vxp1_[x][y] + vxm1_[x+1][y] +
+                              vyp1_[x][y] + vym1_[x][y+1] ) * 0.5;
+                }
+              }
+              // Update junction outgoing waves,
+              // using alternate wave-variable buffers.
+              for (x=0; x<NJ-1; x++) {
+                for (y=0; y<NJ-1; y++) {
+                  float vxy = v_[x][y];
+
+                  // Update positive-going waves.
+                  vxp_[x+1][y] = vxy - vxm1_[x+1][y];
+                  vyp_[x][y+1] = vxy - vym1_[x][y+1];
+
+                  // Update minus-going waves.
+                  vxm_[x][y] = vxy - vxp1_[x][y];
+                  vym_[x][y] = vxy - vyp1_[x][y];
+                }
+              }
+              // Loop over velocity-junction boundary faces, update edge
+              // reflections, with filtering.  We're only filtering on one x and y
+              // edge here and even this could be made much sparser.
+              // no filter here - just decayFactor*
+              for (y=0; y<NJ-1; y++) {
+                vxp_[0][y] = decayFactor* vxm1_[0][y];
+                vxm_[NJ-1][y] = vxp1_[NJ-1][y];
+              }
+              for (x=0; x<NJ-1; x++) {
+                vyp_[x][0] = decayFactor*vym1_[x][0];
+                vym_[x][NJ-1] = vyp1_[x][NJ-1];
+              }
+              // Output = sum of outgoing waves at far corner.
+              //~ outBuffer[i] = vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1];
+              outBuffer[i] = vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2];
+            } // end if tick1
+            //~ DBG( outBuffer[i] );
         }
     }
 
@@ -355,28 +255,10 @@ private:
         ///   }
         /// }
         // so try a single sample excitation in middle:
-        int xArea = 10;
-        int yArea = 10;
-        for (int x = -xArea; x < xArea; x++)
-        {
-            for (int y = -yArea; y < yArea; y++)
-            {
-                vxp1_[x + midind][y + midind] = 1.0f;
-                vxm1_[x + midind][y + midind] = 1.0f;
-                vyp1_[x + midind][y + midind] = 1.0f;
-                vym1_[x + midind][y + midind] = 1.0f;
-            }
-            
-        }
-        // Do initial display. This is the finite difference scheme
-
-        for (int x = 0; x < NJ-1; x++) {
-            for (int y = 0; y < NJ-1; y++) {
-                v_[x][y] = ( vxp_[x][y] + vxm_[x][y+1] +
-                            vyp_[x][y] + vym_[x+1][y] ) * 0.5;
-            }
-        }
-        
+        vxp1_[midind][midind] = 1.0f;
+        vxm1_[midind][midind] = 1.0f;
+        vyp1_[midind][midind] = 1.0f;
+        vym1_[midind][midind] = 1.0f;
     };
 
     //==============================================================================
@@ -400,15 +282,10 @@ private:
     std::vector< std::vector<float> > vym1_;  // [NXMAX][NYMAX];   // negative-y velocity wave
 
     // NB: the y = zeros(1,N=44100); in matlab will be outBuffer in generateAndAddData!
-    
-    int pos = 0;
-    int NJ = 128;
-    int checkNJ = NJ;
-    float lowpassCoef = 0.5;
-    float buffer[4] = {0,0,0,0};
-    float buffer2[4] = {0,0,0,0};
 
-    float decayFactor = 0.9f;
+    int pos = 0;
+    int NJ = 32;
+    float decayFactor = 0.4f;
     int tickcount = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MeshSynthesizer)
