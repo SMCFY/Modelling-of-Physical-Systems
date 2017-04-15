@@ -29,14 +29,30 @@ public:
     */
     MeshSynthesizer (double insampleRate, double frequencyInHz):
                                                               thumbnailCache (5),
-                                                              thumbnail (1, formatManager, thumbnailCache)
+                                                              thumbnail (1, formatManager, thumbnailCache),
+                  outwavFile(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName()),
+                  outStream(outwavFile.createOutputStream()),
+                  aFwriter(wav.createWriterFor (outStream, sampleRate,
+                                                                           1, 32,
+                                                                           StringPairArray(), 0))
     {
         doPluckForNextBuffer.set (false);
         sampleRate = insampleRate;
         prepareSynthesiserState (sampleRate, frequencyInHz);
         thumbnail.addChangeListener (this);
+        //~ outwavFile = File(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName());
+        // we'd need a destructor to set these to nullptr at end:
+        //~ outStream = ScopedPointer<OutputStream>(outwavFile.createOutputStream());
+        //~ aFwriter = ScopedPointer<AudioFormatWriter>(wav.createWriterFor (outStream, sampleRate,
+        //~                                                                   1, 32,
+        //~                                                                   StringPairArray(), 0));
     }
 
+    ~MeshSynthesizer() {
+      // segfaults here, regardless if we delete or not
+      //~ aFwriter = nullptr;
+      //~ outStream = nullptr;
+    }
     //==============================================================================
     /** Excite the simulated string by plucking it at a given position.
 
@@ -185,7 +201,9 @@ public:
               }
             }
             thumbnail.reset(1,sampleRate,numSamples);
-            thumbnail.addBlock(0, AudioBuffer<float>(&outBuffer,1,numSamples), 0, numSamples);
+            AudioBuffer<float> mybuf(&outBuffer,1,numSamples);
+            thumbnail.addBlock(0, mybuf, 0, numSamples);
+            aFwriter->writeFromAudioSampleBuffer(mybuf, 0, numSamples);
             //~ DBG( outBuffer[i] );
         }
     }
@@ -226,6 +244,10 @@ public:
     AudioThumbnailCache thumbnailCache;
     AudioThumbnail thumbnail;
     double sampleRate;
+    File outwavFile;
+    WavAudioFormat wav;
+    ScopedPointer<OutputStream> outStream;
+    ScopedPointer<AudioFormatWriter> aFwriter;
 
 private:
     //==============================================================================
