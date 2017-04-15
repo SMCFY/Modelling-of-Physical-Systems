@@ -74,7 +74,7 @@ public:
     //~ const char* teapot_obj = (const char*) temp_binary_data_7; // SO: 43179796
     //static constexpr const char* teapot_obj = (const char*) temp_binary_data_7;
     static const char* teapot_obj; // = (const char*) temp_binary_data_7;
-    
+
 
     struct Vertex
     {
@@ -184,6 +184,7 @@ public:
     ScopedPointer<Shape> shape;
     ScopedPointer<Attributes> attributes;
     ScopedPointer<Uniforms> uniforms;
+    WavefrontObjFile::Shape curshape;
 
 private:
     OpenGLContext openGLContext;

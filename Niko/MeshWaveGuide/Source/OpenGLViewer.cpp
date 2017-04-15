@@ -56,6 +56,7 @@ const char* OpenGLViewer::teapot_obj = (const char*) OpenGLViewer::temp_binary_d
 struct OpenGLViewer::Shape
 {
     bool skipDraw = false;
+    int currentBuffer = -1;
     Shape (OpenGLContext& openGLContext)
     {
         if (shapeFile.load (teapot_obj).wasOk()) {
@@ -68,7 +69,14 @@ struct OpenGLViewer::Shape
             }
         }
     }
-    
+    // different constructor function signature, just to overload:
+    Shape (OpenGLContext& openGLContext, WavefrontObjFile::Shape& inshape)
+    {
+      // vertexBuffers.clear(); // should be already, we're in ctor
+      vertexBuffers.add (new VertexBuffer (openGLContext, inshape));
+      currentBuffer = 0;
+    }
+
     void reload(OpenGLContext& openGLContext, String& objstr) {
         skipDraw = true;
         vertexBuffers.clear();
@@ -81,7 +89,7 @@ struct OpenGLViewer::Shape
         }
         skipDraw = false;
     }
-    
+
     void draw (OpenGLContext& openGLContext, Attributes& attributes)
     {
         //~ DBG( "vertexBuffers size: " + String(vertexBuffers.size()) );
@@ -90,75 +98,90 @@ struct OpenGLViewer::Shape
         {
             VertexBuffer& vertexBuffer = *vertexBuffers.getUnchecked (i);
             vertexBuffer.bind();
-            
+
             attributes.enable (openGLContext);
             //~ glPolygonMode(GL_FRONT_AND_BACK, GL_LINE_LOOP); // this forces wireframe; can be below, too
-            glDrawElements (GL_LINE_LOOP, vertexBuffer.numIndices, GL_UNSIGNED_INT, 0); //GL_TRIANGLES
+            glDrawElements (GL_LINE_LOOP, vertexBuffer.numIndices, GL_UNSIGNED_INT, 0); //GL_TRIANGLES, GL_LINE_LOOP, GL_QUADS
             //~ DBG( "vertexBuffer nI: " + String(i) + " " + String(vertexBuffer.numIndices) );
             attributes.disable (openGLContext);
         }
     }
-    
+
 private:
     struct VertexBuffer
     {
         VertexBuffer (OpenGLContext& context, WavefrontObjFile::Shape& shape) : openGLContext (context)
         {
             numIndices = shape.mesh.indices.size();
-            
+
             openGLContext.extensions.glGenBuffers (1, &vertexBuffer);
             openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
-            
+
             Array<Vertex> vertices;
             createVertexListFromMesh (shape.mesh, vertices, Colours::green);
-            
+
             openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, vertices.size() * (int) sizeof (Vertex),
                                                    vertices.getRawDataPointer(), GL_STATIC_DRAW);
-            
+
             openGLContext.extensions.glGenBuffers (1, &indexBuffer);
             openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
             openGLContext.extensions.glBufferData (GL_ELEMENT_ARRAY_BUFFER, numIndices * (int) sizeof (juce::uint32),
                                                    shape.mesh.indices.getRawDataPointer(), GL_STATIC_DRAW);
         }
-        
+
         ~VertexBuffer()
         {
             openGLContext.extensions.glDeleteBuffers (1, &vertexBuffer);
             openGLContext.extensions.glDeleteBuffers (1, &indexBuffer);
         }
-        
+
         void bind()
         {
             openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, vertexBuffer);
             openGLContext.extensions.glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         }
-        
+
         GLuint vertexBuffer, indexBuffer;
         int numIndices;
         OpenGLContext& openGLContext;
-        
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VertexBuffer)
     };
-    
+
     WavefrontObjFile shapeFile;
     OwnedArray<VertexBuffer> vertexBuffers;
-    
+
+    static void addVertexToList (Array<Vertex>& list, WavefrontObjFile::Vertex inv, WavefrontObjFile::Vertex inn = { 0.5f, 0.5f, 0.5f }, WavefrontObjFile::TextureCoord intc = { 0.5f, 0.5f }, Colour colour=Colours::green)
+    {
+        const float scale = 0.2f;
+        // WavefrontObjFile::TextureCoord defaultTexCoord = { 0.5f, 0.5f };
+        // WavefrontObjFile::Vertex defaultNormal = { 0.5f, 0.5f, 0.5f };
+        Vertex vert =
+        {
+            { scale * inv.x, scale * inv.y, scale * inv.z, },
+            { scale * inn.x, scale * inn.y, scale * inn.z, },
+            { colour.getFloatRed(), colour.getFloatGreen(), colour.getFloatBlue(), colour.getFloatAlpha() },
+            { intc.x, intc.y }
+        };
+
+        list.add (vert);
+    }
     static void createVertexListFromMesh (const WavefrontObjFile::Mesh& mesh, Array<Vertex>& list, Colour colour)
     {
         const float scale = 0.2f;
         WavefrontObjFile::TextureCoord defaultTexCoord = { 0.5f, 0.5f };
         WavefrontObjFile::Vertex defaultNormal = { 0.5f, 0.5f, 0.5f };
-        
+
         for (int i = 0; i < mesh.vertices.size(); ++i)
         {
             const WavefrontObjFile::Vertex& v = mesh.vertices.getReference (i);
-            
+
             const WavefrontObjFile::Vertex& n
             = i < mesh.normals.size() ? mesh.normals.getReference (i) : defaultNormal;
-            
+
             const WavefrontObjFile::TextureCoord& tc
             = i < mesh.textureCoords.size() ? mesh.textureCoords.getReference (i) : defaultTexCoord;
-            
+
             Vertex vert =
             {
                 { scale * v.x, scale * v.y, scale * v.z, },
@@ -166,7 +189,7 @@ private:
                 { colour.getFloatRed(), colour.getFloatGreen(), colour.getFloatBlue(), colour.getFloatAlpha() },
                 { tc.x, tc.y }
             };
-            
+
             list.add (vert);
         }
     }
@@ -253,7 +276,8 @@ void OpenGLViewer::updateShader()
       shader = newShader;
       shader->use();
 
-      shape    = new Shape (openGLContext);
+      //~ shape    = new Shape (openGLContext);
+      shape    = new Shape (openGLContext, curshape);
       attributes = new Attributes (openGLContext, *shader);
       uniforms   = new Uniforms (openGLContext, *shader);
 
@@ -297,23 +321,47 @@ void OpenGLViewer::updateMeshSizeNreal(int newsize)
       //~ }
     //~ }
     // easier calc - but some vertices will be repeated
+    WavefrontObjFile::Mesh tmesh;
     for (int tx=0; tx<nrc; tx++) {
       for (int ty=0; ty<nrc; ty++) {
         ssv << "v " << std::fixed << (float)tx << " " << std::fixed << (float)ty << " " << "0.0\n";
         ssv << "v " << std::fixed << (float)(tx+1) << " " << std::fixed << (float)ty << " " << "0.0\n";
         ssv << "v " << std::fixed << (float)(tx+1) << " " << std::fixed << (float)(ty+1) << " " << "0.0\n";
         ssv << "v " << std::fixed << (float)tx << " " << std::fixed << (float)(ty+1) << " " << "0.0\n";
+        WavefrontObjFile::Vertex tv0 = { (float)tx, (float)ty, 0.0f }; // aggregate initializer
+        WavefrontObjFile::Vertex tv1 = { (float)(tx+0), (float)(ty+1), 0.0f };
+        WavefrontObjFile::Vertex tv2 = { (float)(tx+1), (float)(ty+1), 0.0f };
+        WavefrontObjFile::Vertex tv3 = { (float)(tx+1), (float)(ty+0), 0.0f };
+        tmesh.vertices.add(tv0); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
+        tmesh.vertices.add(tv1); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
+        tmesh.vertices.add(tv2); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
+        tmesh.vertices.add(tv3); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
+        // add return to original point, since its a GL_LINE_STRIP, otherwise it will also draw diagonals when it moves to next elem
+        WavefrontObjFile::Vertex tv4 = { (float)tx, (float)ty, 0.0f };
+        tmesh.vertices.add(tv4); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
       }
+      // add return to original point, since its a GL_LINE_STRIP, otherwise it will also draw diagonals when it moves to next row
+      WavefrontObjFile::Vertex tvx = { (float)tx, 0.0f, 0.0f };
+      tmesh.vertices.add(tvx); tmesh.indices.add((WavefrontObjFile::Index)(tmesh.vertices.size()-1));
     }
     for(int tx=0; tx<numCells; tx++) {
       ssf << "f " << (4*tx+1) << " " << (4*tx+2) << " " << (4*tx+3) << " " << (4*tx+4) << "\n";
+      //~ WavefrontObjFile::Index ti0 = (5*tx+0), ti1 = (5*tx+1), ti2 = (5*tx+2), ti3 = (5*tx+3), ti4 = (5*tx+4);
+      //~ tmesh.indices.add(ti0); tmesh.indices.add(ti1); tmesh.indices.add(ti2); tmesh.indices.add(ti3); tmesh.indices.add(ti4);
     }
     String objstr( ssv.str() + "g myPlane\n" + ssf.str() + "g\n" );
     DBG( objstr );
     //~ const ScopedLock sl (updateLock);
     //~ shape = nullptr;
-    shape    = new Shape (openGLContext);
-    shape->reload(openGLContext, objstr);
+    //shape    = new Shape (openGLContext);
+    //shape->reload(openGLContext, objstr);
+    //~ WavefrontObjFile::Shape tshape;
+    curshape.name = "myshape";
+    curshape.mesh = tmesh;
+    curshape.material = WavefrontObjFile::Material();
+
+    //Shape (OpenGLContext& openGLContext, WavefrontObjFile::Shape& inshape)
+    shape    = new Shape (openGLContext, curshape);
 }
 
 // This is a virtual method in OpenGLRenderer, and is called when it's time
