@@ -17,7 +17,7 @@
 
     Not performance-optimised!
 */
-class MeshSynthesizer
+class MeshSynthesizer : ChangeListener
 {
 public:
     //==============================================================================
@@ -27,10 +27,14 @@ public:
         @param frequencyInHz   The fundamental frequency of the simulated string in
                                Hertz.
     */
-    MeshSynthesizer (double sampleRate, double frequencyInHz)
+    MeshSynthesizer (double insampleRate, double frequencyInHz):
+                                                              thumbnailCache (5),
+                                                              thumbnail (1, formatManager, thumbnailCache)
     {
         doPluckForNextBuffer.set (false);
+        sampleRate = insampleRate;
         prepareSynthesiserState (sampleRate, frequencyInHz);
+        thumbnail.addChangeListener (this);
     }
 
     //==============================================================================
@@ -180,6 +184,8 @@ public:
                 meshStateImage2.setPixelAt(x,y, Colour::fromFloatRGBA( ((v_[x][y] < 0) ? -v_[x][y] : 0.0f)*amp, ((v_[x][y] >= 0) ? v_[x][y] : 0.0f)*amp, 0.0f, 1.0f));
               }
             }
+            thumbnail.reset(1,sampleRate,numSamples);
+            thumbnail.addBlock(0, AudioBuffer<float>(&outBuffer,1,numSamples), 0, numSamples);
             //~ DBG( outBuffer[i] );
         }
     }
@@ -204,8 +210,22 @@ public:
       meshStateImage2 = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
     }
 
+    void changeListenerCallback (ChangeBroadcaster* source) override
+    {
+      if (source == &thumbnail)        thumbnailChanged();
+    }
+
+    void thumbnailChanged()
+    {
+      //~ repaint();
+    }
+
     Image meshStateImage, meshStateImage2;
     float amp = 1.0f;
+    AudioFormatManager formatManager;
+    AudioThumbnailCache thumbnailCache;
+    AudioThumbnail thumbnail;
+    double sampleRate;
 
 private:
     //==============================================================================

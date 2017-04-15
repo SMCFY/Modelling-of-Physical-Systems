@@ -102,6 +102,20 @@ public:
         // You can add your drawing code here!
         g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage, 650, 200);
         g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage2, 650, 300);
+
+        if (meshSynths.getUnchecked(0)->thumbnail.getNumChannels() > 0) {
+          const Rectangle<int> thumbnailBounds (650, 400, 200, 100);
+          g.setColour (Colours::white);
+          g.fillRect (thumbnailBounds);
+
+          g.setColour (Colours::red);
+
+          meshSynths.getUnchecked(0)->thumbnail.drawChannels (g,
+                                  thumbnailBounds,
+                                  0.0,                                    // start time
+                                  meshSynths.getUnchecked(0)->thumbnail.getTotalLength(),             // end time
+                                  1.0f);                                  // vertical zoom
+        }
         repaint(); // must have this to have the image update...
     }
 
