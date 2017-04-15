@@ -100,6 +100,8 @@ public:
 
 
         // You can add your drawing code here!
+        g.drawImageAt (meshSynths.getUnchecked(0)->meshStateImage, 700, 200);
+        repaint(); // must have this to have the image update...
     }
 
     void resized() override
@@ -120,6 +122,7 @@ public:
       //DBG( "Received meshSizeNChanged: " + String(gcomps->meshSizeN));
       myOpenGLViewer.updateMeshSizeN(gcomps->meshSizeN);
       meshSynths.getUnchecked(0)->updateMeshSizeNJ(gcomps->meshSizeN);
+      repaint(); // must have this to have image redrawn with new size
     }
 
     void generateMeshSynths (double sampleRate)
