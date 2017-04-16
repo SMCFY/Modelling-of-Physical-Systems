@@ -149,8 +149,10 @@ public:
               ///% Compute perfect reflection - skipping
               // get output sample (sum of outgoing waves at a x,y position on grid); take the corner here
               // should be vxp_ and vyp_ in two-pass algo; in one-pass use the *1_ to at least hear something
-              //~ outBuffer[i] = vxp_[NJ-1][NJ-1] + vyp_[NJ-1][NJ-1];
-              outBuffer[i] = vxp_[NJ/2][NJ/2] + vyp_[NJ/2][NJ/2];
+              //~ outBuffer[i] = amp*(vxp_[NJ-1][NJ-1] + vyp_[NJ-1][NJ-1]);
+              outBuffer[i] = amp*(vxp_[NJ/2][NJ/2] + vyp_[NJ/2][NJ/2]);
+              //~ outBuffer[i] = amp*(vxp_[10][10] + vyp_[10][10]);
+              //~ outBuffer[i] = amp*(v_[NJ/2][NJ/2]);
               //~ DBG( outBuffer[i] );
             } // end if tick0
             else { // tick1
@@ -189,8 +191,10 @@ public:
                 vym_[x][NJ-1] = vyp1_[x][NJ-1];
               }
               // Output = sum of outgoing waves at far corner.
-              //~ outBuffer[i] = vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1];
+              //~ outBuffer[i] = amp*(vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1]);
               outBuffer[i] = amp*(vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2]);
+              //~ outBuffer[i] = amp*(vxp1_[10][10] + vyp1_[10][10]);
+              //~ outBuffer[i] = amp*(v_[NJ/2][NJ/2]);
             } // end if tick1
             // set debug image:
             float tval; for (x=0; x<meshStateImage.getWidth(); x++) {
@@ -205,7 +209,7 @@ public:
             thumbnail.addBlock(0, mybuf, 0, numSamples);
             aFwriter->writeFromAudioSampleBuffer(mybuf, 0, numSamples);
             //~ DBG( outBuffer[i] );
-        }
+        } // end for numSamples
     }
 
     void updateMeshSizeNJ(int inNJ)
@@ -310,11 +314,26 @@ private:
         ///     vym1_[midind+ir-1][midind+ic-1] = excitationSample[ic];
         ///   }
         /// }
+        //
         // so try a single sample excitation in middle:
-        vxp1_[midind][midind] = 1.0f;
-        vxm1_[midind][midind] = 1.0f;
-        vyp1_[midind][midind] = 1.0f;
-        vym1_[midind][midind] = 1.0f;
+        //~ vxp1_[midind][midind] = 1.0f;
+        //~ vxm1_[midind][midind] = 1.0f;
+        //~ vyp1_[midind][midind] = 1.0f;
+        //~ vym1_[midind][midind] = 1.0f;
+        //
+        // try sinusoidal excitation;
+        // we map all NJ nodes to represent 0 to pi; so the ends will be at 0
+        // so for two nodes, all is at 0; and for three nodes, only the mid one is1
+        for (int ir=0; ir<NJ; ir++) {
+          for (int ic=0; ic<NJ; ic++) {
+            float myval = sin( ((ir*1.0f)/NJ)*M_PI )*sin( ((ic*1.0f)/NJ)*M_PI );
+            vxp1_[ir][ic] = myval;
+            vxm1_[ir][ic] = myval;
+            vyp1_[ir][ic] = myval;
+            vym1_[ir][ic] = myval;
+          }
+        }
+
     };
 
     //==============================================================================
