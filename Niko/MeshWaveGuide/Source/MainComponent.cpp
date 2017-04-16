@@ -13,12 +13,15 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
+// NOTE: out.wav must be manually removed, else it is not overwritten!
 class MainContentComponent   : public AudioAppComponent,
                                public GuiComponents::Listener
 {
 public:
     //==============================================================================
-    MainContentComponent()
+    MainContentComponent():
+      outwavFile(File::getCurrentWorkingDirectory().getChildFile("out.wav").getFullPathName()),
+      outStream(outwavFile.createOutputStream())
     {
 
         // Create an instance of our GUIComponents content component, and add it to our window...
@@ -52,6 +55,13 @@ public:
 
         // For more details, see the help for AudioProcessor::prepareToPlay()
         generateMeshSynths (sampleRate);
+        aFwriter = ScopedPointer<AudioFormatWriter>(wav.createWriterFor (outStream, sampleRate,
+                                                                          1, 32,
+                                                                          StringPairArray(), 0));
+        if (aFwriter != nullptr)
+        {
+          outStream.release(); // (passes responsibility for deleting the stream to the writer object that is now using it);
+        }
     }
 
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
@@ -81,6 +91,7 @@ public:
                 bufferToFill.numSamples * sizeof (float));
           }
         }
+        aFwriter->writeFromAudioSampleBuffer(*bufferToFill.buffer, 0, bufferToFill.numSamples); //ok;  	startSample, numSamples
     }
 
     void releaseResources() override
@@ -171,6 +182,10 @@ private:
     //~ MeshSynthesizer meshSynth; // this instantiates instantly with MeshSynthesizer(), however, we don't have a constructor without arguments, so we get: error: no matching function for call to ‘MeshSynthesizer::MeshSynthesizer()’; note:   candidate expects 2 arguments, 0 provided
     // so either should use pointers (and then we take care of destruction), or as in StringSynthesiser.h -> use OwnedArray, and instantiate synths inside.. here we'll use only one synth though:
     OwnedArray<MeshSynthesizer> meshSynths;
+    File outwavFile;
+    WavAudioFormat wav;
+    ScopedPointer<OutputStream> outStream;
+    ScopedPointer<AudioFormatWriter> aFwriter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

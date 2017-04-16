@@ -29,28 +29,35 @@ public:
     */
     MeshSynthesizer (double insampleRate, double frequencyInHz):
                                                               thumbnailCache (5),
-                                                              thumbnail (1, formatManager, thumbnailCache),
-                  outwavFile(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName()),
-                  outStream(outwavFile.createOutputStream()),
-                  aFwriter(wav.createWriterFor (outStream, sampleRate,
-                                                                           1, 32,
-                                                                           StringPairArray(), 0))
+                                                              thumbnail (1, formatManager, thumbnailCache)//,
+                  //~ outwavFile(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName()),
+                  //~ outStream(outwavFile.createOutputStream())//,
+                  //~ aFwriter(wav.createWriterFor (outStream, insampleRate,
+                                                                           //~ 1, 32,
+                                                                           //~ StringPairArray(), 0))
     {
         doPluckForNextBuffer.set (false);
         sampleRate = insampleRate;
+        DBG( "Sample rate: " + String(sampleRate) );
         prepareSynthesiserState (sampleRate, frequencyInHz);
         thumbnail.addChangeListener (this);
         //~ outwavFile = File(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName());
         // we'd need a destructor to set these to nullptr at end:
         //~ outStream = ScopedPointer<OutputStream>(outwavFile.createOutputStream());
         //~ aFwriter = ScopedPointer<AudioFormatWriter>(wav.createWriterFor (outStream, sampleRate,
-        //~                                                                   1, 32,
-        //~                                                                   StringPairArray(), 0));
+                                                                          //~ 1, 32,
+                                                                          //~ StringPairArray(), 0));
+        //~ if (aFwriter != nullptr)
+        //~ {
+          //~ outStream.release(); // (passes responsibility for deleting the stream to the writer object that is now using it); this fixes the segfault at exit...
+        //~ }
     }
 
     ~MeshSynthesizer() {
       // segfaults here, regardless if we delete or not
-      //~ aFwriter = nullptr;
+      //~ if (aFwriter != nullptr) {
+        //~ aFwriter = nullptr;
+      //~ }
       //~ outStream = nullptr;
     }
     //==============================================================================
@@ -196,20 +203,20 @@ public:
               //~ outBuffer[i] = amp*(vxp1_[10][10] + vyp1_[10][10]);
               //~ outBuffer[i] = amp*(v_[NJ/2][NJ/2]);
             } // end if tick1
-            // set debug image:
-            float tval; for (x=0; x<meshStateImage.getWidth(); x++) {
-              for (y=0; y<meshStateImage.getHeight(); y++) {
-                tval = (vxp1_[x][y] + vyp1_[x][y]); //;
-                meshStateImage.setPixelAt(x,y, Colour::fromFloatRGBA( ((tval < 0) ? -tval : 0.0f)*amp, ((tval >= 0) ? tval : 0.0f)*amp, 0.0f, 1.0f));
-                meshStateImage2.setPixelAt(x,y, Colour::fromFloatRGBA( ((v_[x][y] < 0) ? -v_[x][y] : 0.0f)*amp, ((v_[x][y] >= 0) ? v_[x][y] : 0.0f)*amp, 0.0f, 1.0f));
-              }
-            }
-            thumbnail.reset(1,sampleRate,numSamples);
-            AudioBuffer<float> mybuf(&outBuffer,1,numSamples);
-            thumbnail.addBlock(0, mybuf, 0, numSamples);
-            aFwriter->writeFromAudioSampleBuffer(mybuf, 0, numSamples);
             //~ DBG( outBuffer[i] );
         } // end for numSamples
+        // set debug image:
+        float tval; for (int x=0; x<meshStateImage.getWidth(); x++) {
+          for (int y=0; y<meshStateImage.getHeight(); y++) {
+            tval = (vxp1_[x][y] + vyp1_[x][y]); //;
+            meshStateImage.setPixelAt(x,y, Colour::fromFloatRGBA( ((tval < 0) ? -tval : 0.0f)*amp, ((tval >= 0) ? tval : 0.0f)*amp, 0.0f, 1.0f));
+            meshStateImage2.setPixelAt(x,y, Colour::fromFloatRGBA( ((v_[x][y] < 0) ? -v_[x][y] : 0.0f)*amp, ((v_[x][y] >= 0) ? v_[x][y] : 0.0f)*amp, 0.0f, 1.0f));
+          }
+        }
+        thumbnail.reset(1,sampleRate,numSamples);
+        AudioBuffer<float> mybuf(&outBuffer,1,numSamples);
+        thumbnail.addBlock(0, mybuf, 0, numSamples);
+        //~ aFwriter->writeFromAudioSampleBuffer(mybuf, 0, numSamples);
     }
 
     void updateMeshSizeNJ(int inNJ)
@@ -248,10 +255,10 @@ public:
     AudioThumbnailCache thumbnailCache;
     AudioThumbnail thumbnail;
     double sampleRate;
-    File outwavFile;
-    WavAudioFormat wav;
-    ScopedPointer<OutputStream> outStream;
-    ScopedPointer<AudioFormatWriter> aFwriter;
+    //~ File outwavFile;
+    //~ WavAudioFormat wav;
+    //~ ScopedPointer<OutputStream> outStream;
+    //~ ScopedPointer<AudioFormatWriter> aFwriter;
 
 private:
     //==============================================================================
