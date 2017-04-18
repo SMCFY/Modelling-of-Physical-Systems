@@ -40,7 +40,7 @@ class GuiComponents  : public Component,
 {
 public:
     //==============================================================================
-    GuiComponents ();
+    GuiComponents (CriticalSection& incs);
     ~GuiComponents();
 
     //==============================================================================
@@ -67,6 +67,7 @@ public:
     int meshSizeN;
     float amp;
     int meshPosX, meshPosY;
+    CriticalSection& csGuiMeshSize;
     //[/UserMethods]
 
     void paint (Graphics& g) override;

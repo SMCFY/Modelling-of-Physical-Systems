@@ -27,7 +27,8 @@ public:
         @param frequencyInHz   The fundamental frequency of the simulated string in
                                Hertz.
     */
-    MeshSynthesizer (double insampleRate, double frequencyInHz):
+    MeshSynthesizer (double insampleRate, double frequencyInHz, CriticalSection& incs):
+                                                              csSynthMeshSize(incs),
                                                               thumbnailCache (5),
                                                               thumbnail (1, formatManager, thumbnailCache)//,
                   //~ outwavFile(File::getCurrentWorkingDirectory().getChildFile ("out.wav").getFullPathName()),
@@ -93,6 +94,7 @@ public:
     */
     void generateAndAddData (float* outBuffer, int numSamples)
     {
+        const ScopedLock sl(csSynthMeshSize);
         if (doPluckForNextBuffer.compareAndSetBool (0, 1))
             exciteInternalBuffer();
 
@@ -222,6 +224,7 @@ public:
 
     void updateMeshSizeNJ(int inNJ)
     {
+      const ScopedLock sl(csSynthMeshSize);
       NJ = inNJ;
       // .resize(no_of_rows, std::vector<int>(no_of_cols, initial_value));
       v_.resize(NJ-1, std::vector<float>(NJ-1, 0.0f));
@@ -267,6 +270,7 @@ public:
     //~ ScopedPointer<OutputStream> outStream;
     //~ ScopedPointer<AudioFormatWriter> aFwriter;
     int meshPosX = 0, meshPosY = 0; // mesh "sampling" position - where do we "listen" for audio on the mesh!
+    CriticalSection& csSynthMeshSize;
 
 private:
     //==============================================================================

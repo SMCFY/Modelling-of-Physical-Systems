@@ -27,7 +27,8 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-GuiComponents::GuiComponents ()
+GuiComponents::GuiComponents (CriticalSection& incs)
+    : csGuiMeshSize(incs)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -166,6 +167,7 @@ void GuiComponents::sliderValueChanged (Slider* sliderThatWasMoved)
 
     if (sliderThatWasMoved == sliderN)
     {
+        const ScopedLock sl(csGuiMeshSize);
         //[UserSliderCode_sliderN] -- add your slider handling code here..
         meshSizeN = (int)sliderN->getValue();
         // reset meshpos sliders:
@@ -245,9 +247,10 @@ void GuiComponents::removeListener (GuiComponents::Listener* const listener)    
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="GuiComponents" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="800" initialHeight="400">
+                 parentClasses="public Component" constructorParams="CriticalSection&amp; incs"
+                 variableInitialisers="csGuiMeshSize(incs)" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="800"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ffffffff"/>
   <SLIDER name="slider for N" id="437c6ee0435feb1f" memberName="sliderN"
           virtualName="" explicitFocusOrder="0" pos="48 8 50% 24" tooltip="changes N"

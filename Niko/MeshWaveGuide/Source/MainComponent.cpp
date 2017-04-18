@@ -21,7 +21,8 @@ public:
     //==============================================================================
     MainContentComponent():
       outwavFile(File::getCurrentWorkingDirectory().getChildFile("out.wav").getFullPathName()),
-      outStream(outwavFile.createOutputStream())
+      outStream(outwavFile.createOutputStream()),
+      guiComps(csMeshSize)
     {
 
         // Create an instance of our GUIComponents content component, and add it to our window...
@@ -66,6 +67,7 @@ public:
 
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
+        const ScopedLock sl(csMeshSize);
         // Your audio-processing code goes here!
 
         // For more details, see the help for AudioProcessor::getNextAudioBlock()
@@ -107,6 +109,7 @@ public:
     void paint (Graphics& g) override
     {
         // (Our component is opaque, so we must completely fill the background with a solid colour)
+        const ScopedLock sl(csMeshSize);
         g.fillAll (Colour (0xff888888));
 
 
@@ -150,6 +153,7 @@ public:
     }
     void meshSizeNChanged (GuiComponents* gcomps) override
     {
+      //~ const ScopedLock sl(csMeshSize);
       //DBG( "Received meshSizeNChanged: " + String(gcomps->meshSizeN));
       myOpenGLViewer.updateMeshSizeN(gcomps->meshSizeN);
       meshSynths.getUnchecked(0)->updateMeshSizeNJ(gcomps->meshSizeN);
@@ -164,7 +168,7 @@ public:
       meshSynths.clear();
       // create just one synth for now
       double frequencyInHz = 400;
-      meshSynths.add (new MeshSynthesizer (sampleRate, frequencyInHz));
+      meshSynths.add (new MeshSynthesizer (sampleRate, frequencyInHz, csMeshSize));
     }
 
     void triggerButtonClicked (GuiComponents* gcomps) override
@@ -183,6 +187,7 @@ public:
       //DBG( "Received meshPosYChanged: " + String(gcomps->meshPosY));
       meshSynths.getUnchecked(0)->updateMeshPos(gcomps->meshPosX, gcomps->meshPosY);
     }
+    CriticalSection csMeshSize; // single critical section used by all components
 
 
 private:
