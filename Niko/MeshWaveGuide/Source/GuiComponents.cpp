@@ -67,6 +67,36 @@ GuiComponents::GuiComponents ()
     sliderAmp->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
     sliderAmp->addListener (this);
 
+    addAndMakeVisible (labelMeshPosX = new Label ("label for MeshPosX",
+                                                  TRANS("MeshPosX")));
+    labelMeshPosX->setFont (Font ("Arial", 15.00f, Font::bold));
+    labelMeshPosX->setJustificationType (Justification::centredRight);
+    labelMeshPosX->setEditable (false, false, false);
+    labelMeshPosX->setColour (TextEditor::textColourId, Colours::black);
+    labelMeshPosX->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sliderMeshPosX = new Slider ("slider for MeshPosX"));
+    sliderMeshPosX->setTooltip (TRANS("changes MeshPosX"));
+    sliderMeshPosX->setRange (0, 63, 1);
+    sliderMeshPosX->setSliderStyle (Slider::LinearHorizontal);
+    sliderMeshPosX->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderMeshPosX->addListener (this);
+
+    addAndMakeVisible (labelMeshPosY = new Label ("label for MeshPosY",
+                                                  TRANS("MeshPosY")));
+    labelMeshPosY->setFont (Font ("Arial", 15.00f, Font::bold));
+    labelMeshPosY->setJustificationType (Justification::centredRight);
+    labelMeshPosY->setEditable (false, false, false);
+    labelMeshPosY->setColour (TextEditor::textColourId, Colours::black);
+    labelMeshPosY->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sliderMeshPosY = new Slider ("slider for MeshPosY"));
+    sliderMeshPosY->setTooltip (TRANS("changes MeshPosY"));
+    sliderMeshPosY->setRange (0, 63, 1);
+    sliderMeshPosY->setSliderStyle (Slider::LinearHorizontal);
+    sliderMeshPosY->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderMeshPosY->addListener (this);
+
 
     //[UserPreSize]
     sliderN->setValue (32);
@@ -89,6 +119,10 @@ GuiComponents::~GuiComponents()
     textButtonTrigger = nullptr;
     labelAmp = nullptr;
     sliderAmp = nullptr;
+    labelMeshPosX = nullptr;
+    sliderMeshPosX = nullptr;
+    labelMeshPosY = nullptr;
+    sliderMeshPosY = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -117,6 +151,10 @@ void GuiComponents::resized()
     textButtonTrigger->setBounds (getWidth() - 170, 8, 150, 24);
     labelAmp->setBounds (0, 32, 40, 24);
     sliderAmp->setBounds (48, 32, proportionOfWidth (0.5000f), 24);
+    labelMeshPosX->setBounds (0, 56, 80, 24);
+    sliderMeshPosX->setBounds (80, 56, proportionOfWidth (0.5000f), 24);
+    labelMeshPosY->setBounds (0, 80, 80, 24);
+    sliderMeshPosY->setBounds (80, 80, proportionOfWidth (0.5000f), 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -130,6 +168,10 @@ void GuiComponents::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_sliderN] -- add your slider handling code here..
         meshSizeN = (int)sliderN->getValue();
+        // reset meshpos sliders:
+        sliderMeshPosX->setRange (0, meshSizeN-1, 1);
+        sliderMeshPosY->setRange (0, meshSizeN-1, 1);
+        // send event:
         Component::BailOutChecker checker (this);
         GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
         listeners.callChecked (checker, &GuiComponents::Listener::meshSizeNChanged, gcomps);
@@ -143,6 +185,24 @@ void GuiComponents::sliderValueChanged (Slider* sliderThatWasMoved)
         GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
         listeners.callChecked (checker, &GuiComponents::Listener::ampChanged, gcomps);
         //[/UserSliderCode_sliderAmp]
+    }
+    else if (sliderThatWasMoved == sliderMeshPosX)
+    {
+        //[UserSliderCode_sliderMeshPosX] -- add your slider handling code here..
+        meshPosX = (int)sliderMeshPosX->getValue();
+        Component::BailOutChecker checker (this);
+        GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
+        listeners.callChecked (checker, &GuiComponents::Listener::meshPosXChanged, gcomps);
+        //[/UserSliderCode_sliderMeshPosX]
+    }
+    else if (sliderThatWasMoved == sliderMeshPosY)
+    {
+        //[UserSliderCode_sliderMeshPosY] -- add your slider handling code here..
+        meshPosY = (int)sliderMeshPosY->getValue();
+        Component::BailOutChecker checker (this);
+        GuiComponents* gcomps = this; // (must use an intermediate variable here to avoid a VS2005 compiler bug)
+        listeners.callChecked (checker, &GuiComponents::Listener::meshPosYChanged, gcomps);
+        //[/UserSliderCode_sliderMeshPosY]
     }
 
     //[UsersliderValueChanged_Post]
@@ -210,6 +270,26 @@ BEGIN_JUCER_METADATA
   <SLIDER name="slider for Amp" id="4ed88ac0173b5d93" memberName="sliderAmp"
           virtualName="" explicitFocusOrder="0" pos="48 32 50% 24" tooltip="changes Amp&#10;"
           min="1" max="500" int="0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
+  <LABEL name="label for MeshPosX" id="117a0c9888829080" memberName="labelMeshPosX"
+         virtualName="" explicitFocusOrder="0" pos="0 56 80 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="MeshPosX" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Arial" fontsize="15" bold="1"
+         italic="0" justification="34"/>
+  <SLIDER name="slider for MeshPosX" id="39ba5a9015d4debd" memberName="sliderMeshPosX"
+          virtualName="" explicitFocusOrder="0" pos="80 56 50% 24" tooltip="changes MeshPosX"
+          min="0" max="63" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
+  <LABEL name="label for MeshPosY" id="85fbedf9df706fdc" memberName="labelMeshPosY"
+         virtualName="" explicitFocusOrder="0" pos="0 80 80 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="MeshPosY" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Arial" fontsize="15" bold="1"
+         italic="0" justification="34"/>
+  <SLIDER name="slider for MeshPosY" id="57a2f05cae68f580" memberName="sliderMeshPosY"
+          virtualName="" explicitFocusOrder="0" pos="80 80 50% 24" tooltip="changes MeshPosY"
+          min="0" max="63" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
 </JUCER_COMPONENT>

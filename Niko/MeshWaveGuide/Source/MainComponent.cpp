@@ -153,6 +153,9 @@ public:
       //DBG( "Received meshSizeNChanged: " + String(gcomps->meshSizeN));
       myOpenGLViewer.updateMeshSizeN(gcomps->meshSizeN);
       meshSynths.getUnchecked(0)->updateMeshSizeNJ(gcomps->meshSizeN);
+      // reset meshpos sliders (cannot, private - do from caller, in-class):
+      //gcomps->sliderMeshPosX->setRange (0, gcomps->meshSizeN-1, 1);
+      //gcomps->sliderMeshPosY->setRange (0, gcomps->meshSizeN-1, 1);
       repaint(); // must have this to have image redrawn with new size
     }
 
@@ -169,6 +172,16 @@ public:
       DBG( "Received triggerButtonClicked: " );
       float position = 0.5;
       meshSynths.getUnchecked(0)->stringPlucked (position);
+    }
+    void meshPosXChanged (GuiComponents* gcomps) override
+    {
+      //DBG( "Received meshPosXChanged: " + String(gcomps->meshPosX));
+      meshSynths.getUnchecked(0)->updateMeshPos(gcomps->meshPosX, gcomps->meshPosY);
+    }
+    void meshPosYChanged (GuiComponents* gcomps) override
+    {
+      //DBG( "Received meshPosYChanged: " + String(gcomps->meshPosY));
+      meshSynths.getUnchecked(0)->updateMeshPos(gcomps->meshPosX, gcomps->meshPosY);
     }
 
 

@@ -199,9 +199,10 @@ public:
               }
               // Output = sum of outgoing waves at far corner.
               //~ outBuffer[i] = amp*(vxp1_[NJ-1][NJ-1] + vyp1_[NJ-1][NJ-1]);
-              outBuffer[i] = amp*(vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2]);
+              //~ outBuffer[i] = amp*(vxp1_[NJ/2][NJ/2] + vyp1_[NJ/2][NJ/2]);
               //~ outBuffer[i] = amp*(vxp1_[10][10] + vyp1_[10][10]);
               //~ outBuffer[i] = amp*(v_[NJ/2][NJ/2]);
+              outBuffer[i] = amp*(vxp1_[meshPosX][meshPosY] + vyp1_[meshPosX][meshPosY]);
             } // end if tick1
             //~ DBG( outBuffer[i] );
         } // end for numSamples
@@ -249,6 +250,12 @@ public:
       //~ repaint();
     }
 
+    void updateMeshPos(int inMeshPosX, int inMeshPosY)
+    {
+      meshPosX = inMeshPosX;
+      meshPosY = inMeshPosY;
+    }
+
     Image meshStateImage, meshStateImage2;
     float amp = 1.0f;
     AudioFormatManager formatManager;
@@ -259,6 +266,7 @@ public:
     //~ WavAudioFormat wav;
     //~ ScopedPointer<OutputStream> outStream;
     //~ ScopedPointer<AudioFormatWriter> aFwriter;
+    int meshPosX = 0, meshPosY = 0; // mesh "sampling" position - where do we "listen" for audio on the mesh!
 
 private:
     //==============================================================================

@@ -202,6 +202,7 @@ OpenGLViewer::OpenGLViewer()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+    // (the vertex shader also ultimately takes care of rotation via mouse drag)
     newVertexShader =
       "attribute vec4 position;\n"
       "attribute vec4 normal;\n"
@@ -321,6 +322,7 @@ void OpenGLViewer::updateMeshSizeNreal(int newsize)
       //~ }
     //~ }
     // easier calc - but some vertices will be repeated
+    // wavefront obj strings (ssv, ssf) not used anymore, but keeping for reference:
     WavefrontObjFile::Mesh tmesh;
     for (int tx=0; tx<nrc; tx++) {
       for (int ty=0; ty<nrc; ty++) {
@@ -350,7 +352,9 @@ void OpenGLViewer::updateMeshSizeNreal(int newsize)
       //~ tmesh.indices.add(ti0); tmesh.indices.add(ti1); tmesh.indices.add(ti2); tmesh.indices.add(ti3); tmesh.indices.add(ti4);
     }
     String objstr( ssv.str() + "g myPlane\n" + ssf.str() + "g\n" );
-    DBG( objstr );
+    // dump Wavefront obj string to stdout - note, it gets quite large for NJ>32, and might hog stdout, so disabling it for now:
+    //~ DBG( objstr );
+    //
     //~ const ScopedLock sl (updateLock);
     //~ shape = nullptr;
     //shape    = new Shape (openGLContext);
