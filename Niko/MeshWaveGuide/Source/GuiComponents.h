@@ -68,6 +68,7 @@ public:
     float amp;
     int meshPosX, meshPosY;
     CriticalSection& csGuiMeshSize;
+    void setDbgSampText(String instring);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -91,6 +92,7 @@ private:
     ScopedPointer<Slider> sliderMeshPosX;
     ScopedPointer<Label> labelMeshPosY;
     ScopedPointer<Slider> sliderMeshPosY;
+    ScopedPointer<Label> labelDbgSamp;
 
 
     //==============================================================================

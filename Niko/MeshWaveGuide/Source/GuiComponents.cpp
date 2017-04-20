@@ -98,6 +98,14 @@ GuiComponents::GuiComponents (CriticalSection& incs)
     sliderMeshPosY->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
     sliderMeshPosY->addListener (this);
 
+    addAndMakeVisible (labelDbgSamp = new Label ("label for sample debug",
+                                                 TRANS("ABNS XXX ABSS XXX")));
+    labelDbgSamp->setFont (Font ("Arial", 15.00f, Font::plain));
+    labelDbgSamp->setJustificationType (Justification::centredLeft);
+    labelDbgSamp->setEditable (false, false, false);
+    labelDbgSamp->setColour (TextEditor::textColourId, Colours::black);
+    labelDbgSamp->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     sliderN->setValue (32);
@@ -124,6 +132,7 @@ GuiComponents::~GuiComponents()
     sliderMeshPosX = nullptr;
     labelMeshPosY = nullptr;
     sliderMeshPosY = nullptr;
+    labelDbgSamp = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -156,6 +165,7 @@ void GuiComponents::resized()
     sliderMeshPosX->setBounds (80, 56, proportionOfWidth (0.5000f), 24);
     labelMeshPosY->setBounds (0, 80, 80, 24);
     sliderMeshPosY->setBounds (80, 80, proportionOfWidth (0.5000f), 24);
+    labelDbgSamp->setBounds (getWidth() - 170, 40, 152, 16);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -167,7 +177,6 @@ void GuiComponents::sliderValueChanged (Slider* sliderThatWasMoved)
 
     if (sliderThatWasMoved == sliderN)
     {
-        const ScopedLock sl(csGuiMeshSize);
         //[UserSliderCode_sliderN] -- add your slider handling code here..
         meshSizeN = (int)sliderN->getValue();
         // reset meshpos sliders:
@@ -234,6 +243,7 @@ void GuiComponents::buttonClicked (Button* buttonThatWasClicked)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void GuiComponents::addListener (GuiComponents::Listener* const listener)       { listeners.add (listener); }
 void GuiComponents::removeListener (GuiComponents::Listener* const listener)    { listeners.remove (listener); }
+void GuiComponents::setDbgSampText(String instring) { labelDbgSamp->setText(instring, dontSendNotification); }
 //[/MiscUserCode]
 
 
@@ -295,6 +305,11 @@ BEGIN_JUCER_METADATA
           min="0" max="63" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
+  <LABEL name="label for sample debug" id="5f5ea1352c89dbf3" memberName="labelDbgSamp"
+         virtualName="" explicitFocusOrder="0" pos="170R 40 152 16" edTextCol="ff000000"
+         edBkgCol="0" labelText="ABNS XXX ABSS XXX" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Arial"
+         fontsize="15" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

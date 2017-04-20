@@ -90,6 +90,9 @@ public:
         // (to prevent the output of random noise)
         bufferToFill.clearActiveBufferRegion();
 
+        ABNumSamps = bufferToFill.numSamples;
+        ABStartSamp = bufferToFill.startSample;
+
         for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); ++channel)
         {
           float* const channelData = bufferToFill.buffer->getWritePointer (channel, bufferToFill.startSample);
@@ -144,7 +147,9 @@ public:
                                   meshSynths.getUnchecked(0)->thumbnail.getTotalLength(),             // end time
                                   1.0f);                                  // vertical zoom
         }
+        guiComps.setDbgSampText("ABNS " + String(ABNumSamps) + " ABSS " + String(ABStartSamp));
         repaint(); // must have this to have the image update...
+        //~ DBG( "ABNS " + String(ABNumSamps) + " ABSS " + String(ABStartSamp));
     }
 
     void resized() override
@@ -204,7 +209,7 @@ public:
       myOpenGLViewer.meshPosY = gcomps->meshPosY;
     }
     CriticalSection csMeshSize; // single critical section used by all components
-
+    float ABNumSamps=0.0f, ABStartSamp=0.0f;
 
 private:
     //==============================================================================
