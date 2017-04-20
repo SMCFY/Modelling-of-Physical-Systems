@@ -207,20 +207,40 @@ OpenGLViewer::OpenGLViewer()
       "attribute vec4 position;\n"
       "attribute vec4 normal;\n"
       "varying vec3 norm;\n"
+      "varying vec3 pos;\n"
       "uniform mat4 projectionMatrix;\n"
       "uniform mat4 viewMatrix;\n"
       "uniform vec2 meshPos;\n"
+      "varying vec2 v_texCoord;\n"
       "void main()\n"
       "{\n"
       "    norm = normal.xyz;\n"
-      "    if ((position.x != meshPos.x) && (position.y != meshPos.y)) { \n"
+      "    pos = position.xyz;\n"
+      "    //vec4 a = gl_Vertex;\n"
+      "    //not sure why I have to scale w 6.4 here to be correct - regardless of viewer scale/zoom?!;\n"
+      "    v_texCoord = meshPos*6.4; //vec2(gl_MultiTexCoord0);\n"
+      "    //if ((position.x <= meshPos.x*8.0) && (position.y <= meshPos.y*8.0)) { \n"
+      "    //  gl_Position = projectionMatrix * viewMatrix * (position + vec4(0.0,0.0,1.0,0.0));\n"
+      "    //} else {\n"
       "      gl_Position = projectionMatrix * viewMatrix * position;\n"
-      "    }\n"
+      "    //}\n"
       "}\n";
     newFragmentShader =
+      "varying vec2 v_texCoord;\n"
+      "varying vec3 pos;\n"
+      "const float Epsilon = 0.08; // this also sets the length of the white 'indicator cross'\n"
       "void main()\n"
       "{\n"
-      "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+      "    float cond1 = v_texCoord.x-Epsilon;\n"
+      "    float cond2 = v_texCoord.x+Epsilon;\n"
+      "    float cond3 = v_texCoord.y-Epsilon;\n"
+      "    float cond4 = v_texCoord.y+Epsilon;\n"
+      "    //if ((pos.x <= v_texCoord.x) && (pos.y <= v_texCoord.y)) { \n"
+      "    if ((pos.x >= cond1) && (pos.x <= cond2) && (pos.y >= cond3) && (pos.y <= cond4)) { \n"
+      "      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); // white 'indicator cross'\n"
+      "    } else {\n"
+      "      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+      "    }\n"
       "}\n";
 
     setOpaque (true);
@@ -413,7 +433,9 @@ void OpenGLViewer::renderOpenGL() //override
       uniforms->lightPosition->set (-15.0f, 10.0f, 15.0f, 0.0f);
 
     if (uniforms->meshPos != nullptr)
-      uniforms->meshPos->set (meshPosX, meshPosY);
+      uniforms->meshPos->set (meshPosX/meshSizeN, meshPosY/meshSizeN);
+    //~ DBG( "MP " + String(meshPosX*scale/desktopScale) + " " + String(meshPosY*scale/desktopScale) );
+    //~ DBG( "scl  " + String(scale) + " dscl " + String(desktopScale) ); // scl  1.28125 (changes) dscl 1 (no change)
 
     //~ if (uniforms->bouncingNumber != nullptr)
       //~ uniforms->bouncingNumber->set (bouncingNumber.getValue());
