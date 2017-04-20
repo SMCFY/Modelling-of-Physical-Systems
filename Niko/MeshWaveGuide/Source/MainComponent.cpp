@@ -181,11 +181,13 @@ public:
     {
       //DBG( "Received meshPosXChanged: " + String(gcomps->meshPosX));
       meshSynths.getUnchecked(0)->updateMeshPos(gcomps->meshPosX, gcomps->meshPosY);
+      myOpenGLViewer.meshPosX = gcomps->meshPosX;
     }
     void meshPosYChanged (GuiComponents* gcomps) override
     {
       //DBG( "Received meshPosYChanged: " + String(gcomps->meshPosY));
       meshSynths.getUnchecked(0)->updateMeshPos(gcomps->meshPosX, gcomps->meshPosY);
+      myOpenGLViewer.meshPosY = gcomps->meshPosY;
     }
     CriticalSection csMeshSize; // single critical section used by all components
 

@@ -67,6 +67,7 @@ public:
     int doMeshSizeN = -1; // signal
     void updateMeshSizeN(int newsize);
     void updateMeshSizeNreal(int newsize);
+    float meshPosX = 0.0f, meshPosY = 0.0f;
 
     // v.x, v.y, v.z, n.x, n.y, n.z, tc.x, tc.y -> 8
     // cannot initialize static const member in header file; just declare it here
@@ -156,9 +157,10 @@ public:
         texture      = createUniform (openGLContext, shader, "demoTexture");
         lightPosition  = createUniform (openGLContext, shader, "lightPosition");
         //~ bouncingNumber   = createUniform (openGLContext, shader, "bouncingNumber");
+        meshPos  = createUniform (openGLContext, shader, "meshPos");
       }
 
-      ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, texture, lightPosition; //, bouncingNumber;
+      ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, texture, lightPosition, meshPos; //, bouncingNumber;
 
     private:
       static OpenGLShaderProgram::Uniform* createUniform (OpenGLContext& openGLContext,

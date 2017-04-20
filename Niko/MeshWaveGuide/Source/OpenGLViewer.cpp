@@ -209,10 +209,13 @@ OpenGLViewer::OpenGLViewer()
       "varying vec3 norm;\n"
       "uniform mat4 projectionMatrix;\n"
       "uniform mat4 viewMatrix;\n"
+      "uniform vec2 meshPos;\n"
       "void main()\n"
       "{\n"
       "    norm = normal.xyz;\n"
-      "    gl_Position = projectionMatrix * viewMatrix * position;\n"
+      "    if ((position.x != meshPos.x) && (position.y != meshPos.y)) { \n"
+      "      gl_Position = projectionMatrix * viewMatrix * position;\n"
+      "    }\n"
       "}\n";
     newFragmentShader =
       "void main()\n"
@@ -408,6 +411,9 @@ void OpenGLViewer::renderOpenGL() //override
 
     if (uniforms->lightPosition != nullptr)
       uniforms->lightPosition->set (-15.0f, 10.0f, 15.0f, 0.0f);
+
+    if (uniforms->meshPos != nullptr)
+      uniforms->meshPos->set (meshPosX, meshPosY);
 
     //~ if (uniforms->bouncingNumber != nullptr)
       //~ uniforms->bouncingNumber->set (bouncingNumber.getValue());
