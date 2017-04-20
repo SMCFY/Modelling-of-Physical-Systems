@@ -211,7 +211,7 @@ OpenGLViewer::OpenGLViewer()
       "uniform mat4 projectionMatrix;\n"
       "uniform mat4 viewMatrix;\n"
       "uniform vec2 meshPos;\n"
-      "varying vec2 v_texCoord;\n"
+      "varying vec2 v_texCoord; //out \n"
       "void main()\n"
       "{\n"
       "    norm = normal.xyz;\n"
@@ -226,7 +226,7 @@ OpenGLViewer::OpenGLViewer()
       "    //}\n"
       "}\n";
     newFragmentShader =
-      "varying vec2 v_texCoord;\n"
+      "varying vec2 v_texCoord; // in \n"
       "varying vec3 pos;\n"
       "const float Epsilon = 0.08; // this also sets the length of the white 'indicator cross'\n"
       "void main()\n"

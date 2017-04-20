@@ -35,6 +35,20 @@ public:
         addAndMakeVisible(myOpenGLViewer);
         setSize (800, 600); // if setSize is after the viewport setup, then no need for epxlicit resize()
 
+        //~ if(outwavFile.existsAsFile())
+          //~ outwavFile.deleteFile();
+        //~ outwavFile.create();
+        //~ outwavFile.replaceWithData("", 0);
+
+        outwavFile.replaceWithText(""); // file gets truncated to 0 and never gets written to
+        outStream = outwavFile.createOutputStream(); // ... unless this command is repeated
+
+        // no change if file exists (it remains same size as before):
+        //~ outStream->setPosition(0);
+        //~ outStream->write("",0);
+        //~ outStream->flush();
+        //~ outStream->setPosition(0);
+
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
     }
