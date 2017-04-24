@@ -239,6 +239,7 @@ public:
       // vyp1_.resize(NJ, std::vector<float>(NJ, 0.0f));
       // vym1_.resize(NJ, std::vector<float>(NJ, 0.0f));
 
+      // reinstantiate instead of resize - helps get rid of segfault
       v_ = std::vector<std::vector<float>>(NJ-1, std::vector<float>(NJ-1, 0.0f));
       vxp_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
       vxm_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));

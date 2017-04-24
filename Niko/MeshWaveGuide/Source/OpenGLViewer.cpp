@@ -210,7 +210,7 @@ OpenGLViewer::OpenGLViewer()
       "varying vec3 pos;\n"
       "uniform mat4 projectionMatrix;\n"
       "uniform mat4 viewMatrix;\n"
-      "uniform vec2 meshPos;\n"
+      "uniform vec3 meshPos;\n"
       "varying vec2 v_texCoord; //out \n"
       "void main()\n"
       "{\n"
@@ -218,7 +218,8 @@ OpenGLViewer::OpenGLViewer()
       "    pos = position.xyz;\n"
       "    //vec4 a = gl_Vertex;\n"
       "    //not sure why I have to scale w 6.4 here to be correct - regardless of viewer scale/zoom?!;\n"
-      "    v_texCoord = meshPos*6.4; //vec2(gl_MultiTexCoord0);\n"
+      "    //meshPos.xy crosses about 6 units for 0.0-1.0, regardless of NJ;\n"
+      "    v_texCoord = meshPos.xy*(meshPos.z/5.0); //vec2(gl_MultiTexCoord0);\n"
       "    //if ((position.x <= meshPos.x*8.0) && (position.y <= meshPos.y*8.0)) { \n"
       "    //  gl_Position = projectionMatrix * viewMatrix * (position + vec4(0.0,0.0,1.0,0.0));\n"
       "    //} else {\n"
@@ -433,7 +434,7 @@ void OpenGLViewer::renderOpenGL() //override
       uniforms->lightPosition->set (-15.0f, 10.0f, 15.0f, 0.0f);
 
     if (uniforms->meshPos != nullptr)
-      uniforms->meshPos->set (meshPosX/meshSizeN, meshPosY/meshSizeN);
+      uniforms->meshPos->set (meshPosX/meshSizeN, meshPosY/meshSizeN, meshSizeN); // size as last component!
     //~ DBG( "MP " + String(meshPosX*scale/desktopScale) + " " + String(meshPosY*scale/desktopScale) );
     //~ DBG( "scl  " + String(scale) + " dscl " + String(desktopScale) ); // scl  1.28125 (changes) dscl 1 (no change)
 
