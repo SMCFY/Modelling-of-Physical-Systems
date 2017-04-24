@@ -125,8 +125,8 @@ public:
     //==============================================================================
     void paint (Graphics& g) override
     {
-        // (Our component is opaque, so we must completely fill the background with a solid colour)
         const ScopedLock sl(csMeshSize);
+        // (Our component is opaque, so we must completely fill the background with a solid colour)
         g.fillAll (Colour (0xff888888));
 
 
@@ -172,14 +172,14 @@ public:
     }
     void meshSizeNChanged (GuiComponents* gcomps) override
     {
-      //~ const ScopedLock sl(csMeshSize);
+      const ScopedLock sl(csMeshSize);
       //DBG( "Received meshSizeNChanged: " + String(gcomps->meshSizeN));
       myOpenGLViewer.updateMeshSizeN(gcomps->meshSizeN);
       meshSynths.getUnchecked(0)->updateMeshSizeNJ(gcomps->meshSizeN);
       // reset meshpos sliders (cannot, private - do from caller, in-class):
       //gcomps->sliderMeshPosX->setRange (0, gcomps->meshSizeN-1, 1);
       //gcomps->sliderMeshPosY->setRange (0, gcomps->meshSizeN-1, 1);
-      repaint(); // must have this to have image redrawn with new size
+      //~ repaint(); // must have this to have image redrawn with new size? not anymore, since paint has repaint
     }
 
     void generateMeshSynths (double sampleRate)

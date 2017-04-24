@@ -94,7 +94,7 @@ public:
     */
     void generateAndAddData (float* outBuffer, int numSamples)
     {
-        const ScopedLock sl(csSynthMeshSize);
+        //~ const ScopedLock sl(csSynthMeshSize);
         if (doPluckForNextBuffer.compareAndSetBool (0, 1))
             exciteInternalBuffer();
 
@@ -224,20 +224,30 @@ public:
 
     void updateMeshSizeNJ(int inNJ)
     {
-      const ScopedLock sl(csSynthMeshSize);
+      //~ const ScopedLock sl(csSynthMeshSize);
       NJ = inNJ;
-      // .resize(no_of_rows, std::vector<int>(no_of_cols, initial_value));
-      v_.resize(NJ-1, std::vector<float>(NJ-1, 0.0f));
+      /// .resize(no_of_rows, std::vector<int>(no_of_cols, initial_value));
+      // v_.resize(NJ-1, std::vector<float>(NJ-1, 0.0f));
+      //
+      // vxp_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vxm_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vyp_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vym_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      //
+      // vxp1_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vxm1_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vyp1_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      // vym1_.resize(NJ, std::vector<float>(NJ, 0.0f));
 
-      vxp_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vxm_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vyp_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vym_.resize(NJ, std::vector<float>(NJ, 0.0f));
-
-      vxp1_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vxm1_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vyp1_.resize(NJ, std::vector<float>(NJ, 0.0f));
-      vym1_.resize(NJ, std::vector<float>(NJ, 0.0f));
+      v_ = std::vector<std::vector<float>>(NJ-1, std::vector<float>(NJ-1, 0.0f));
+      vxp_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vxm_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vyp_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vym_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vxp1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vxm1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vyp1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+      vym1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
 
       meshStateImage = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
       meshStateImage2 = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
