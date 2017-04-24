@@ -30,20 +30,20 @@
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MeshWaveGuide"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../modules"/>
-        <MODULEPATH id="juce_events" path="../../modules"/>
-        <MODULEPATH id="juce_graphics" path="../../modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../modules"/>
-        <MODULEPATH id="juce_video" path="../../modules"/>
-        <MODULEPATH id="juce_opengl" path="../../modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../modules"/>
+        <MODULEPATH id="juce_core" path="../../../../modules"/>
+        <MODULEPATH id="juce_events" path="../../../../modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../modules"/>
+        <MODULEPATH id="juce_video" path="../../../../modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
@@ -76,20 +76,20 @@
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MeshWaveGuide"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../modules"/>
-        <MODULEPATH id="juce_events" path="../../modules"/>
-        <MODULEPATH id="juce_graphics" path="../../modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../modules"/>
-        <MODULEPATH id="juce_video" path="../../modules"/>
-        <MODULEPATH id="juce_opengl" path="../../modules"/>
+        <MODULEPATH id="juce_core" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_events" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_graphics" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_cryptography" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_video" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_opengl" path="/media/Data1/src/JUCE_git/modules"/>
         <MODULEPATH id="juce_audio_basics" path="/media/Data1/src/JUCE_git/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/media/Data1/src/JUCE_git/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
