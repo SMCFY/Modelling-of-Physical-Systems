@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="IacPdz" name="MeshWaveGuide" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MeshWaveGuide" includeBinaryInAppConfig="1"
+              jucerVersion="4.3.1">
+  <MAINGROUP id="pFaDGe" name="MeshWaveGuide">
+    <GROUP id="{AAF14D94-6F96-2DC4-8BC0-1C60DB24906D}" name="Source">
+      <FILE id="pkO857" name="Stk.cpp" compile="1" resource="0" file="Source/Stk.cpp"/>
+      <FILE id="dHHeVy" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
+      <FILE id="Ha423G" name="OneZero.cpp" compile="1" resource="0" file="Source/OneZero.cpp"/>
+      <FILE id="GLP5EU" name="OneZero.h" compile="0" resource="0" file="Source/OneZero.h"/>
+      <FILE id="DCQfeT" name="Stk.h" compile="0" resource="0" file="Source/Stk.h"/>
+      <FILE id="gtxm3h" name="MeshSynthesizer.h" compile="0" resource="0"
+            file="Source/MeshSynthesizer.h"/>
+      <FILE id="PBDFSD" name="OpenGLViewer.cpp" compile="1" resource="0"
+            file="Source/OpenGLViewer.cpp"/>
+      <FILE id="QduWAI" name="OpenGLViewer.h" compile="0" resource="0" file="Source/OpenGLViewer.h"/>
+      <FILE id="d27kEX" name="GuiComponents.cpp" compile="1" resource="0"
+            file="Source/GuiComponents.cpp"/>
+      <FILE id="FxQm5k" name="GuiComponents.h" compile="0" resource="0" file="Source/GuiComponents.h"/>
+      <FILE id="JxdQny" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="unrip7" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MeshWaveGuide"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MeshWaveGuide"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../modules"/>
+        <MODULEPATH id="juce_events" path="../../../../modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../modules"/>
+        <MODULEPATH id="juce_video" path="../../../../modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="MeshWaveGuide"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="MeshWaveGuide"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../modules"/>
+        <MODULEPATH id="juce_events" path="../../modules"/>
+        <MODULEPATH id="juce_graphics" path="../../modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../modules"/>
+        <MODULEPATH id="juce_video" path="../../modules"/>
+        <MODULEPATH id="juce_opengl" path="../../modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../modules"/>
+      </MODULEPATHS>
+    </VS2015>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MeshWaveGuide"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MeshWaveGuide"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_events" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_graphics" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_cryptography" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_video" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_opengl" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="/media/Data1/src/JUCE_git/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="/media/Data1/src/JUCE_git/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
