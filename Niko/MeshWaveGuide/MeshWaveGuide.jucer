@@ -5,6 +5,11 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="pFaDGe" name="MeshWaveGuide">
     <GROUP id="{AAF14D94-6F96-2DC4-8BC0-1C60DB24906D}" name="Source">
+      <FILE id="pkO857" name="Stk.cpp" compile="1" resource="0" file="Source/Stk.cpp"/>
+      <FILE id="dHHeVy" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
+      <FILE id="Ha423G" name="OneZero.cpp" compile="1" resource="0" file="Source/OneZero.cpp"/>
+      <FILE id="GLP5EU" name="OneZero.h" compile="0" resource="0" file="Source/OneZero.h"/>
+      <FILE id="DCQfeT" name="Stk.h" compile="0" resource="0" file="Source/Stk.h"/>
       <FILE id="gtxm3h" name="MeshSynthesizer.h" compile="0" resource="0"
             file="Source/MeshSynthesizer.h"/>
       <FILE id="PBDFSD" name="OpenGLViewer.cpp" compile="1" resource="0"

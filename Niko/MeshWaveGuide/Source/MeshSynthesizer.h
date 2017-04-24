@@ -11,6 +11,8 @@
 #ifndef MESHSYNTHESIZER_H_INCLUDED
 #define MESHSYNTHESIZER_H_INCLUDED
 
+#include "OneZero.h"
+
 /**
     A very basic generator of a simulated plucked string sound, implementing
     the Karplus-Strong algorithm.
@@ -146,22 +148,26 @@ public:
               /// vyp1(1,1:NJ-1)  = decayFactor * filter( num, denom,   vym(1,1:NJ-1));
               /// % south
               /// vym1(NJ,1:NJ-1) = decayFactor * filter( num, denom,   vyp(NJ,1:NJ-1));
-              // here just decayfactor, no filter
               for (y=0; y<NJ-1; y++) {
-                vxp1_[0][y] = decayFactor* vxm_[0][y];
-                vxm1_[NJ-1][y] = decayFactor* vxp_[NJ-1][y];
+                //~ vxp1_[0][y] = decayFactor* vxm_[0][y];
+                //~ vxm1_[NJ-1][y] = decayFactor* vxp_[NJ-1][y];
+                vxp1_[0][y] = filterW_[y].tick(vxm_[0][y]);
+                vxm1_[NJ-1][y] = filterE_[y].tick(vxp_[NJ-1][y]);
               }
               for (x=0; x<NJ-1; x++) {
-                vyp1_[x][0] = decayFactor*vym_[x][0];
-                vym1_[x][NJ-1] = decayFactor*vyp_[x][NJ-1];
+                //~ vyp1_[x][0] = decayFactor*vym_[x][0];
+                //~ vym1_[x][NJ-1] = decayFactor*vyp_[x][NJ-1];
+                vyp1_[x][0] = filterN_[x].tick(vym_[x][0]);
+                vym1_[x][NJ-1] = filterS_[x].tick(vyp_[x][NJ-1]);
               }
               ///% Compute perfect reflection - skipping
               // get output sample (sum of outgoing waves at a x,y position on grid); take the corner here
               // should be vxp_ and vyp_ in two-pass algo; in one-pass use the *1_ to at least hear something
               //~ outBuffer[i] = amp*(vxp_[NJ-1][NJ-1] + vyp_[NJ-1][NJ-1]);
-              outBuffer[i] = amp*(vxp_[NJ/2][NJ/2] + vyp_[NJ/2][NJ/2]);
+              //~ outBuffer[i] = amp*(vxp_[NJ/2][NJ/2] + vyp_[NJ/2][NJ/2]);
               //~ outBuffer[i] = amp*(vxp_[10][10] + vyp_[10][10]);
               //~ outBuffer[i] = amp*(v_[NJ/2][NJ/2]);
+              outBuffer[i] = amp*(vxp_[meshPosX][meshPosY] + vyp_[meshPosX][meshPosY]);
               //~ DBG( outBuffer[i] );
             } // end if tick0
             else { // tick1
@@ -190,13 +196,16 @@ public:
               // Loop over velocity-junction boundary faces, update edge
               // reflections, with filtering.  We're only filtering on one x and y
               // edge here and even this could be made much sparser.
-              // no filter here - just decayFactor*
               for (y=0; y<NJ-1; y++) {
-                vxp_[0][y] = decayFactor* vxm1_[0][y];
+                //~ vxp_[0][y] = decayFactor* vxm1_[0][y];
+                //~ vxm_[NJ-1][y] = vxp1_[NJ-1][y];
+                vxp_[0][y] = filterW_[y].tick(vxm1_[0][y]);
                 vxm_[NJ-1][y] = vxp1_[NJ-1][y];
               }
               for (x=0; x<NJ-1; x++) {
-                vyp_[x][0] = decayFactor*vym1_[x][0];
+                //~ vyp_[x][0] = decayFactor*vym1_[x][0];
+                //~ vym_[x][NJ-1] = vyp1_[x][NJ-1];
+                vyp_[x][0] = filterN_[x].tick(vym1_[x][0]);
                 vym_[x][NJ-1] = vyp1_[x][NJ-1];
               }
               // Output = sum of outgoing waves at far corner.
@@ -249,6 +258,28 @@ public:
       vxm1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
       vyp1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
       vym1_ = std::vector<std::vector<float>>(NJ, std::vector<float>(NJ, 0.0f));
+
+      filterN_ = std::vector<stk::OneZero>(NJ, stk::OneZero());
+      filterE_ = std::vector<stk::OneZero>(NJ, stk::OneZero());
+      filterS_ = std::vector<stk::OneZero>(NJ, stk::OneZero());
+      filterW_ = std::vector<stk::OneZero>(NJ, stk::OneZero());
+
+      stk::StkFloat zero = 0.05;
+      // set up NYMAX oneZero filters (e.g., 12)
+      for ( int i=0; i<NJ; i++ ) {
+        filterW_[i].setZero( zero );
+        filterW_[i].setGain( decayFactor );
+        filterE_[i].setZero( zero );
+        filterE_[i].setGain( decayFactor );
+      }
+
+      // set up NXMAX oneZero filters (e.g., 12)
+      for ( int i=0; i<NJ; i++ ) {
+        filterN_[i].setZero( zero );
+        filterN_[i].setGain( decayFactor );
+        filterS_[i].setZero( zero );
+        filterS_[i].setGain( decayFactor );
+      }
 
       meshStateImage = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
       meshStateImage2 = Image(Image::RGB, NJ-1, NJ-1, true); // for v_
@@ -373,6 +404,8 @@ private:
     Atomic<int> doPluckForNextBuffer;
 
     std::vector<float> excitationSample, delayLine;
+
+    // from: Mesh2D.h in http://julianvogels.de/wp-content/uploads/2013/04/2DMeshBoundary1.zip
     std::vector< std::vector<float> > v_;    // [NXMAX-1][NYMAX-1]; // junction velocities
 
     std::vector< std::vector<float> > vxp_;  // [NXMAX][NYMAX];   // positive-x velocity wave
@@ -387,6 +420,11 @@ private:
     std::vector< std::vector<float> > vym1_;  // [NXMAX][NYMAX];   // negative-y velocity wave
 
     // NB: the y = zeros(1,N=44100); in matlab will be outBuffer in generateAndAddData!
+
+    std::vector<stk::OneZero> filterN_; // OneZero  filterN_[NXMAX];
+    std::vector<stk::OneZero> filterE_; // OneZero  filterE_[NYMAX];
+    std::vector<stk::OneZero> filterS_; // OneZero  filterS_[NXMAX];
+    std::vector<stk::OneZero> filterW_; // OneZero  filterW_[NYMAX];
 
     int pos = 0;
     int NJ = 32;
