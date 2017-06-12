@@ -13,7 +13,7 @@ function y = nonLinString (f0, d, g, a1, a2)
     	d = 0.7;
   	end
   	if nargin < 3
-    	g = 0.1;
+    	g = 0.5;
   	end
    	if nargin < 4
     	a1 = 0.01;
@@ -49,7 +49,6 @@ function y = nonLinString (f0, d, g, a1, a2)
 	loss = [0 0]; %loss filter(LPF) 			y[n] = (1-d)x[n]+d*y[n-1]
 	%d = 0.7; %decay rate
 	
-    
 	for i=1:length(y)
         %a0 = pmSin(i);        
 
@@ -60,14 +59,14 @@ function y = nonLinString (f0, d, g, a1, a2)
 		nonL(1) = a0*del(L)+del(L+1)-a0*nonL(2); %reading the delay lines last sample(x[n]) + its past sample(x[n-1])
 
         %coefficient modulation
-		w(1) = del(L)-a0*nonL(1);
+		w = del(L)-a0*nonL(1);
 		%f = (1/(1-a0))*(w(1)+w(2));
 	    if sign(pmSin(i)) == 1 %change the filter coefficient on sign change
 	        a0 = k(1);
 	    elseif sign(pmSin(i)) == -1
 	        a0 = k(2);
 	    end
-	   
+
 		inhar(2) = inhar(1);
 		inhar(1) = -g*nonL(1)+nonL(2)+g*inhar(2); 
 	
@@ -77,7 +76,7 @@ function y = nonLinString (f0, d, g, a1, a2)
 	    y(i) = loss(1); %output (sampled at the spring termination)
 
 	end
-	
+
 	y = y/max(y);
 	sound(y, fs);
 end
